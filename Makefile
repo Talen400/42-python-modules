@@ -7,7 +7,7 @@ FLAKE8 := $(VENV)/bin/flake8
 PIP := $(VENV)/bin/pip
 MYPY := $(VENV)/bin/mypy
 
-all: lint
+all: lint typecheck
 
 clean:
 	@echo "cleaning pycaches..."
@@ -17,9 +17,13 @@ clean:
 lint: $(VENV)
 	@echo "checking flake8..."
 	@$(FLAKE8) module_0[0-9]/
+	@echo "'flake8' all already! :)"
+
+typecheck: $(VENV)
 	@echo "checking mypy..."
 	@$(MYPY) module_0[0-9]/
-	@echo "all already! :)"
+	@echo "'mypy' all already! :)"
+
 
 $(VENV):
 	@echo "Creating venv..."
@@ -32,7 +36,7 @@ fclean: clean
 	@rm -rf $(VENV)
 	@echo "fclean done"
 
-requiremnts: $(VENV)
+requirements: $(VENV)
 	@echo "Generating requirements.txt..."
 	@$(PIP) freeze > requirements.txt
 	@echo "requirements.txt updated!"
@@ -43,4 +47,4 @@ install: $(VENV)
 
 re: fclean all
 
-.PHONY: all clean fclean re lint requirements install
+.PHONY: all clean fclean re lint typecheck requirements install
