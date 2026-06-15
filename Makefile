@@ -41,4 +41,6 @@ install: $(VENV)
 	@echo "Installing dependency from requirements.txt..."
 	$(PIP) install -r requirements.txt
 
-.PHONY: all clean fclean lint requirements install
+re: fclean all
+
+.PHONY: all clean fclean re lint requirements install
