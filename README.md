@@ -1,6 +1,6 @@
 # 42 — Python Modules
 
-Este repositório contém os exercícios dos **Python Modules** da [42](https://42.fr/), um
+Este repositório contém os exercícios dos **Python Modules** da [42](https://www.42sp.org.br/), um
 currículo imersivo de engenharia de software. Cada module foca um tema de Python — de
 sintaxe básica a tópicos avançados — com exercícios corrigidos por uma moulinette
 automatizada e por peers.
