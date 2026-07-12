@@ -118,6 +118,33 @@ Estrutura esperada em cada `module_XX/concept.md`:
      ```
      Blocos de código dentro do blockquote também levam `>` antes dos ``` ``` ```
      de abertura/fechamento, senão o recuo quebra no meio.
+
+     **Camada opcional de enriquecimento ("Conexões"):** ao final do bloco de
+     aprofundamento (ainda dentro do blockquote), pode incluir uma pequena lista
+     `> **Conexões:**` com até **2-3** dos seguintes tipos — nunca todos de uma vez,
+     e nunca em todo conceito. Escolha só o(s) que genuinamente agregam pra aquele
+     conceito específico; se nenhum agregar, omita a lista inteira:
+     - `Em C:` comparação direta com o equivalente em C/C++ (útil porque o usuário
+       vem do cursus de C da 42) — só quando a comparação é esclarecedora, não
+       forçada
+     - `Histórico:` uma frase sobre por que Python decidiu fazer assim (PEP,
+       versão, motivação de design) — só se não for redundante
+     - `Diagrama:` um diagrama pequeno em ASCII/Mermaid **só** quando a estrutura é
+       genuinamente espacial/hierárquica (MRO, frame stack, herança)
+     - `Performance:` complexidade (Big O) ou custo de memória, só quando for
+       relevante e não óbvio
+
+     Cada item da lista é **uma linha, uma frase** — isso não é uma seção nova,
+     é um adendo rápido.
+
+     **Verificação obrigatória por tipo de Conexão** (mesmo padrão de rigor):
+     - `Em C:` só inclua se o comportamento do C for conhecido com certeza
+     - `Histórico:` precisa vir com PEP ou versão específica, já citado nas Fontes
+     - `Performance:` só cite Big O derivável da estrutura do código — não invente
+       número específico sem ter medido
+     - `Diagrama:` deve refletir a estrutura real do código do exercício
+
+     Se não for possível verificar um item, **omita-o**.
 - **Regras e restrições do subject** (normas, funções proibidas, versão exigida etc.)
   e o porquê delas existirem — explicado de forma que iniciante entenda a motivação,
   não só a regra

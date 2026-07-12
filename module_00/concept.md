@@ -46,6 +46,9 @@ não escrever `return`, retorna `None`.
 > object, `f_locals`, `f_globals`, e o frame anterior.
 >
 > Documentação: https://docs.python.org/3/reference/executionmodel.html
+>
+> **Conexões:**
+> - Em C: stack frame (RBP/RSP, alinhamento) vs Py frame (heap, refcount + code object + free vars). Ambos empilham, mas o frame Python sobrevive ao escopo se referenciado (ex: `sys._getframe()`).
 
 </details>
 
@@ -135,6 +138,9 @@ de chaves: `f"Olá, {nome}"`. O Python avalia a expressão e formata o resultado
 >
 > O `BUILD_STRING` concatena as partes. `FORMAT_SIMPLE` chama `__format__` na expressão.
 > ⚠️ Atenção: a indentação do bloco `"""` (espaços e `\n`) é **literal** na string final.
+>
+> **Conexões:**
+> - Histórico: PEP 498 (3.6) introduziu f-strings com limitação de aspas. PEP 701 (3.12) removeu a restrição, permitindo f-strings aninhadas e reuso do mesmo tipo de aspas.
 
 </details>
 
@@ -246,6 +252,10 @@ empilha um novo frame, e há um limite (~1000 chamadas).
 > como valor válido. Sem tail call optimization — `CALL` empilha novo frame.
 >
 > https://docs.python.org/3/library/sys.html#sys.getrecursionlimit
+>
+> **Conexões:**
+> - Em C: sem TCO tanto em C (GCC/clang) quanto em CPython. Cada chamada recursiva consome um frame na pilha C real, que é finita (~8MB no Linux).
+> - Performance: O(n) frames na pilha. Limite `sys.getrecursionlimit()` protege contra stack overflow do C.
 
 </details>
 

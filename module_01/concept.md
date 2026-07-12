@@ -71,6 +71,10 @@ Dentro dos métodos, `self` é a própria instância.
 > - `RETURN_CONST 0 (None)` — `__init__` não tem `return` explícito
 >
 > 📚 https://docs.python.org/3/reference/datamodel.html#object.__init__
+>
+> **Conexões:**
+> - Em C: `malloc()` + `init()` vs `__new__()` + `__init__()`. Em C você aloca e inicializa separadamente; Python explicita os dois passos mas esconde o `__new__` na prática.
+> - Diagrama: `Plant("Rose", 25, 30)` → `type.__call__` → `__new__` (aloca) → `__init__` (configura)
 
 </details>
 
@@ -200,6 +204,10 @@ nunca são criados.
 > def show(self) -> str:
 >     return f"{super().show()}\nColor: {self._color}"
 > ```
+>
+> **Conexões:**
+> - Diagrama: MRO de `Flower("Rose", 25, 30, "red")` → `Flower` → `Plant` → `object`. `super().__init__` navega do `Flower` para `Plant` na cadeia.
+> - Em C: herança é composição de structs (struct Flower { struct Plant parent; ... }) vs MRO com lookup dinâmico em dicts.
 
 </details>
 
