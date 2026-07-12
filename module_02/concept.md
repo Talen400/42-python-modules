@@ -67,10 +67,6 @@ incluindo Ctrl+C — evite.
 > é a profundidade do bloco `try`.
 >
 > https://docs.python.org/3/library/dis.html
->
-> **Conexões:**
-> - Histórico: Python 3.11 reescreveu o sistema de exceção — removeu `SETUP_FINALLY`/`END_FINALLY` e introduziu `PUSH_EXC_INFO` + `ExceptionTable`. Performance de `try` sem exceção passou de ~O(n) para O(1).
-> - Em C: `setjmp`/`longjmp` (C) vs `ExceptionTable` (Python). Em C, cada `try` empilha um `jmp_buf`; em Python 3.11+, o custo de entrar num `try` é zero até que uma exceção ocorra.
 
 </details>
 
@@ -183,10 +179,6 @@ match ganha. `except Exception:` captura erros comuns. `except:` captura tudo (m
 > **engolida**.
 >
 > https://docs.python.org/3/reference/compound_stmts.html#the-try-statement
->
-> **Conexões:**
-> - Performance: o `finally` é duplicado no bytecode — 2× o mesmo código. Em C com `setjmp`/`longjmp`, o cleanup executaria uma vez só via `longjmp`. O trade-off do Python evita o custo do `setjmp` (que salva registradores) em troca de mais bytecode.
-> - Em C: `goto cleanup` pattern é o equivalente manual do `finally`. Em C você esquece; em Python o compilador duplica o bloco pra você.
 
 </details>
 
