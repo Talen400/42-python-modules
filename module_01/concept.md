@@ -24,11 +24,11 @@ do mesmo arquivo sem poluir quem importa.
 <details>
 <summary><strong>🔍 Aprofundando: `__name__`, pontos de entrada, shebang</strong></summary>
 
-Quando Python executa um arquivo, `__name__` é `"__main__"`. Quando importado, vira o
-nome do módulo. O guard permite que o mesmo arquivo sirva como script e módulo importável.
-
-O shebang (`#!/usr/bin/env python3`) instrui o kernel a usar o interpretador Python
-quando o script é executado via `./script.py`.
+> Quando Python executa um arquivo, `__name__` é `"__main__"`. Quando importado, vira o
+> nome do módulo. O guard permite que o mesmo arquivo sirva como script e módulo importável.
+>
+> O shebang (`#!/usr/bin/env python3`) instrui o kernel a usar o interpretador Python
+> quando o script é executado via `./script.py`.
 
 </details>
 
@@ -41,36 +41,36 @@ Dentro dos métodos, `self` é a própria instância.
 <details>
 <summary><strong>🔍 Aprofundando: metaclasse type, __new__, descriptor protocol, bytecode</strong></summary>
 
-O corpo da classe é executado em namespace separado pela metaclasse `type`. O resultado
-vira `__dict__` da classe.
-
-✅ `__init__` **não é o construtor**. O construtor real é `__new__` (aloca memória).
-`__init__` recebe a instância já criada e configura atributos. Chamar `Plant("Rose", 25, 30)`:
-1. `type.__call__(Plant, "Rose", 25, 30)`
-2. `Plant.__new__(Plant, ...)` aloca a instância
-3. `Plant.__init__(self, "Rose", 25, 30)` inicializa
-
-✅ Bytecode real de `Plant.__init__()` (ex01) — `STORE_ATTR` com nome não mangleado
-(o name mangling já foi resolvido na compilação):
-
-```
-  4           RESUME                   0
-  5           LOAD_FAST                1 (name)
-              LOAD_FAST                0 (self)
-              STORE_ATTR               0 (name)
-  6           LOAD_FAST                2 (height)
-              LOAD_FAST                0 (self)
-              STORE_ATTR               1 (height)
-  7           LOAD_FAST                3 (age)
-              LOAD_FAST                0 (self)
-              STORE_ATTR               2 (age)
-              RETURN_CONST             0 (None)
-```
-
-- `STORE_ATTR` com nome literal — name mangling já transformado na compilação
-- `RETURN_CONST 0 (None)` — `__init__` não tem `return` explícito
-
-📚 https://docs.python.org/3/reference/datamodel.html#object.__init__
+> O corpo da classe é executado em namespace separado pela metaclasse `type`. O resultado
+> vira `__dict__` da classe.
+>
+> ✅ `__init__` **não é o construtor**. O construtor real é `__new__` (aloca memória).
+> `__init__` recebe a instância já criada e configura atributos. Chamar `Plant("Rose", 25, 30)`:
+> 1. `type.__call__(Plant, "Rose", 25, 30)`
+> 2. `Plant.__new__(Plant, ...)` aloca a instância
+> 3. `Plant.__init__(self, "Rose", 25, 30)` inicializa
+>
+> ✅ Bytecode real de `Plant.__init__()` (ex01) — `STORE_ATTR` com nome não mangleado
+> (o name mangling já foi resolvido na compilação):
+>
+> ```
+>   4           RESUME                   0
+>   5           LOAD_FAST                1 (name)
+>               LOAD_FAST                0 (self)
+>               STORE_ATTR               0 (name)
+>   6           LOAD_FAST                2 (height)
+>               LOAD_FAST                0 (self)
+>               STORE_ATTR               1 (height)
+>   7           LOAD_FAST                3 (age)
+>               LOAD_FAST                0 (self)
+>               STORE_ATTR               2 (age)
+>               RETURN_CONST             0 (None)
+> ```
+>
+> - `STORE_ATTR` com nome literal — name mangling já transformado na compilação
+> - `RETURN_CONST 0 (None)` — `__init__` não tem `return` explícito
+>
+> 📚 https://docs.python.org/3/reference/datamodel.html#object.__init__
 
 </details>
 
@@ -82,23 +82,23 @@ função que opera na instância. Chamar `objeto.metodo()` automaticamente passa
 <details>
 <summary><strong>🔍 Aprofundando: descriptor protocol, MRO lookup, bytecode LOAD_ATTR</strong></summary>
 
-Acesso a `self.height`:
-1. Busca em `instance.__dict__` — se achar, retorna
-2. Se não, busca no `__dict__` da classe (e sobe na MRO)
-3. Se encontrado na classe com `__get__` (descriptor), chama o descriptor
-
-Bytecode real de `Plant.show()` (ex01):
-
-```
-  8           RESUME                   0
-  9           LOAD_CONST               1 ('')
-              LOAD_FAST                0 (self)
-              LOAD_ATTR                0 (name)
-              FORMAT_SIMPLE
-              ...
-              BUILD_STRING             4
-              RETURN_VALUE
-```
+> Acesso a `self.height`:
+> 1. Busca em `instance.__dict__` — se achar, retorna
+> 2. Se não, busca no `__dict__` da classe (e sobe na MRO)
+> 3. Se encontrado na classe com `__get__` (descriptor), chama o descriptor
+>
+> Bytecode real de `Plant.show()` (ex01):
+>
+> ```
+>   8           RESUME                   0
+>   9           LOAD_CONST               1 ('')
+>               LOAD_FAST                0 (self)
+>               LOAD_ATTR                0 (name)
+>               FORMAT_SIMPLE
+>               ...
+>               BUILD_STRING             4
+>               RETURN_VALUE
+> ```
 
 </details>
 
@@ -111,20 +111,20 @@ Use `__attr` só se precisar evitar conflito em herança (o Python renomeia pra
 <details>
 <summary><strong>🔍 Aprofundando: name mangling na compilação, empírico com dir()</strong></summary>
 
-`dir()` em instância com `__height` mostra `_Plant__height` (confirmado em REPL):
-
-```python
-class Test:
-    def __init__(self):
-        self.__secret = 42
-t = Test()
-print(t._Test__secret)  # 42
-```
-
-✅ Name mangling dificulta acesso em subclasses: `__attr` vira `_Pai__attr`, mas
-subclasse tenta `_Filho__attr`. Por isso o subject pede `_attr`.
-
-📚 https://docs.python.org/3/tutorial/classes.html#private-variables
+> `dir()` em instância com `__height` mostra `_Plant__height` (confirmado em REPL):
+>
+> ```python
+> class Test:
+>     def __init__(self):
+>         self.__secret = 42
+> t = Test()
+> print(t._Test__secret)  # 42
+> ```
+>
+> ✅ Name mangling dificulta acesso em subclasses: `__attr` vira `_Pai__attr`, mas
+> subclasse tenta `_Filho__attr`. Por isso o subject pede `_attr`.
+>
+> 📚 https://docs.python.org/3/tutorial/classes.html#private-variables
 
 </details>
 
@@ -136,23 +136,23 @@ Em Python idiomático, usa-se `@property` pra mesma coisa com sintaxe mais limpa
 <details>
 <summary><strong>🔍 Aprofundando: descriptor protocol de property, implementação C</strong></summary>
 
-`@property` é um descriptor: `property.__get__()` chama o getter,
-`property.__set__()` chama o setter.
-
-```python
-@property
-def height(self) -> float:
-    return self._height
-
-@height.setter
-def height(self, value: float) -> None:
-    if value < 0:
-        raise ValueError("Height can't be negative")
-    self._height = value
-```
-
-O subject introduz getters/setters primeiro para ensinar encapsulamento antes da
-syntactic sugar. 📚 https://docs.python.org/3/library/functions.html#property
+> `@property` é um descriptor: `property.__get__()` chama o getter,
+> `property.__set__()` chama o setter.
+>
+> ```python
+> @property
+> def height(self) -> float:
+>     return self._height
+>
+> @height.setter
+> def height(self, value: float) -> None:
+>     if value < 0:
+>         raise ValueError("Height can't be negative")
+>     self._height = value
+> ```
+>
+> O subject introduz getters/setters primeiro para ensinar encapsulamento antes da
+> syntactic sugar. 📚 https://docs.python.org/3/library/functions.html#property
 
 </details>
 
@@ -165,41 +165,41 @@ nunca são criados.
 <details>
 <summary><strong>🔍 Aprofundando: C3 linearization, LOAD_SUPER_ATTR bytecode</strong></summary>
 
-Python usa **C3 linearization** para MRO. Herança simples: `Flower → Plant → object`.
-`super()` delega ao próximo na MRO.
-
-✅ Bytecode real de `Flower.__init__()` (ex05) — `LOAD_SUPER_ATTR` (3.12+) é o opcode
-dedicado para `super()`:
-
-```
- 96           RESUME                   0
-104           LOAD_GLOBAL              0 (super)
-              LOAD_DEREF               6 (__class__)
-              LOAD_FAST                0 (self)
-              LOAD_SUPER_ATTR          5 (__init__ + NULL|self)
-              LOAD_FAST_LOAD_FAST     18 (name, height)
-              LOAD_FAST_LOAD_FAST     52 (ages, growth)
-              CALL                     4
-              POP_TOP
-105           LOAD_CONST               1 ('')
-              LOAD_FAST                0 (self)
-              STORE_ATTR               2 (_color)
-```
-
-- `LOAD_SUPER_ATTR` (3.12+) — opcode dedicado para `super()`
-- A sequência `super()` + `__init__` compila para `LOAD_GLOBAL(super)` + `LOAD_DEREF(__class__)` +
-  `LOAD_SUPER_ATTR` + argumentos + `CALL`
-
-`super()` sem argumentos equivale a `super(__class__, self)`. A variável `__class__`
-é inserida pelo compilador em métodos.
-
-⚠️ No código existente, `Flower.show()` (ex05) **não chama** `super().show()` — constrói a
-string do zero, duplicando lógica. Design alternativo:
-
-```python
-def show(self) -> str:
-    return f"{super().show()}\nColor: {self._color}"
-```
+> Python usa **C3 linearization** para MRO. Herança simples: `Flower → Plant → object`.
+> `super()` delega ao próximo na MRO.
+>
+> ✅ Bytecode real de `Flower.__init__()` (ex05) — `LOAD_SUPER_ATTR` (3.12+) é o opcode
+> dedicado para `super()`:
+>
+> ```
+>  96           RESUME                   0
+> 104           LOAD_GLOBAL              0 (super)
+>               LOAD_DEREF               6 (__class__)
+>               LOAD_FAST                0 (self)
+>               LOAD_SUPER_ATTR          5 (__init__ + NULL|self)
+>               LOAD_FAST_LOAD_FAST     18 (name, height)
+>               LOAD_FAST_LOAD_FAST     52 (ages, growth)
+>               CALL                     4
+>               POP_TOP
+> 105           LOAD_CONST               1 ('')
+>               LOAD_FAST                0 (self)
+>               STORE_ATTR               2 (_color)
+> ```
+>
+> - `LOAD_SUPER_ATTR` (3.12+) — opcode dedicado para `super()`
+> - A sequência `super()` + `__init__` compila para `LOAD_GLOBAL(super)` + `LOAD_DEREF(__class__)` +
+>   `LOAD_SUPER_ATTR` + argumentos + `CALL`
+>
+> `super()` sem argumentos equivale a `super(__class__, self)`. A variável `__class__`
+> é inserida pelo compilador em métodos.
+>
+> ⚠️ No código existente, `Flower.show()` (ex05) **não chama** `super().show()` — constrói a
+> string do zero, duplicando lógica. Design alternativo:
+>
+> ```python
+> def show(self) -> str:
+>     return f"{super().show()}\nColor: {self._color}"
+> ```
 
 </details>
 
@@ -213,32 +213,36 @@ def show(self) -> str:
 <details>
 <summary><strong>🔍 Aprofundando: bytecode real de ambos, bound vs unbound</strong></summary>
 
-Bytecode de `Plant.is_older_than_year()` (staticmethod, ex06):
-```
- 33           RESUME                   0
- 34           LOAD_FAST                0 (days)
-              LOAD_CONST               1 (365)
-              COMPARE_OP             148 (bool(>))
-              RETURN_VALUE
-```
-— não recebe `self` ou `cls`, apenas argumentos explícitos.
-
-Bytecode de `Plant.create_anonymous()` (classmethod, ex06):
-```
- 37           RESUME                   0
- 39           LOAD_FAST                0 (cls)
-              LOAD_CONST               1 ('Unknown plant')
-              LOAD_CONST               2 (0.0)
-              LOAD_CONST               3 (0)
-              LOAD_CONST               4 (1.0)
-              LOAD_CONST               0 (None)
-              ...
-              CALL                     5
-              RETURN_VALUE
-```
-— se chamado em `Flower.create_anonymous()`, `cls` = `Flower`.
-
-📚 https://docs.python.org/3/library/functions.html#classmethod
+> Bytecode de `Plant.is_older_than_year()` (staticmethod, ex06):
+>
+> ```
+>  33           RESUME                   0
+>  34           LOAD_FAST                0 (days)
+>               LOAD_CONST               1 (365)
+>               COMPARE_OP             148 (bool(>))
+>               RETURN_VALUE
+> ```
+>
+> — não recebe `self` ou `cls`, apenas argumentos explícitos.
+>
+> Bytecode de `Plant.create_anonymous()` (classmethod, ex06):
+>
+> ```
+>  37           RESUME                   0
+>  39           LOAD_FAST                0 (cls)
+>               LOAD_CONST               1 ('Unknown plant')
+>               LOAD_CONST               2 (0.0)
+>               LOAD_CONST               3 (0)
+>               LOAD_CONST               4 (1.0)
+>               LOAD_CONST               0 (None)
+>               ...
+>               CALL                     5
+>               RETURN_VALUE
+> ```
+>
+> — se chamado em `Flower.create_anonymous()`, `cls` = `Flower`.
+>
+> 📚 https://docs.python.org/3/library/functions.html#classmethod
 
 </details>
 
@@ -250,9 +254,9 @@ não têm acesso automático à instância externa.
 <details>
 <summary><strong>🔍 Aprofundando: nested class é atributo estático, herança de nested</strong></summary>
 
-`_Stats` dentro de `Plant` é apenas um atributo de classe — não recebe `self` da externa.
-`Tree._TreeStats(Plant._Stats)` estende a nested class.
-`_TreeStats.display()` pode chamar `super().display()` normalmente.
+> `_Stats` dentro de `Plant` é apenas um atributo de classe — não recebe `self` da externa.
+> `Tree._TreeStats(Plant._Stats)` estende a nested class.
+> `_TreeStats.display()` pode chamar `super().display()` normalmente.
 
 </details>
 
@@ -264,10 +268,10 @@ se é instância de `Tree`. Útil pra polimorfismo sem precisar de métodos virt
 <details>
 <summary><strong>🔍 Aprofundando: isinstance internamente, PEP 634, performance</strong></summary>
 
-`match` usa `isinstance()` internamente. `case Tree():` verifica a classe do sujeito.
-Ordem importa: primeiro match ganha. Performance similar a cadeia de `isinstance()`.
-
-📚 https://peps.python.org/pep-0634/
+> `match` usa `isinstance()` internamente. `case Tree():` verifica a classe do sujeito.
+> Ordem importa: primeiro match ganha. Performance similar a cadeia de `isinstance()`.
+>
+> 📚 https://peps.python.org/pep-0634/
 
 </details>
 

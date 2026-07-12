@@ -97,16 +97,27 @@ Estrutura esperada em cada `module_XX/concept.md`:
   1. **TL;DR** (1–3 frases, sem jargão): o que é e pra que serve. Deve fazer sentido
      pra alguém que nunca ouviu falar do conceito.
   2. **Aprofundamento** dentro de um bloco colapsável do GitHub, pra não intimidar
-     quem só quer o essencial:
+     quem só quer o essencial. O conteúdo interno deve ficar em **blockquote**
+     (prefixo `>` em cada linha) — isso faz o GitHub renderizar com barra lateral e
+     recuo, deixando claro visualmente que aquele bloco é diferente do TL;DR mesmo
+     depois de expandido:
      ```markdown
      <details>
      <summary><strong>🔍 Aprofundando: bytecode, internals, edge cases</strong></summary>
 
-     (conteúdo técnico denso aqui — bytecode real via dis.dis(), trade-offs,
-     referências a PEPs, etc.)
+     > (conteúdo técnico denso aqui — bytecode real via dis.dis(), trade-offs,
+     > referências a PEPs, etc. Cada linha do aprofundamento começa com `>`,
+     > incluindo linhas em branco entre parágrafos e blocos de código.)
+     >
+     > ```
+     > RESUME 0
+     > LOAD_GLOBAL ...
+     > ```
 
      </details>
      ```
+     Blocos de código dentro do blockquote também levam `>` antes dos ``` ``` ```
+     de abertura/fechamento, senão o recuo quebra no meio.
 - **Regras e restrições do subject** (normas, funções proibidas, versão exigida etc.)
   e o porquê delas existirem — explicado de forma que iniciante entenda a motivação,
   não só a regra
