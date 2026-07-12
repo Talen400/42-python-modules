@@ -156,9 +156,18 @@ Estrutura esperada em cada `module_XX/concept.md`:
 
      **Verificação obrigatória por tipo de Conexão** (mesmo padrão de rigor das
      regras 3–5, não é "liberdade criativa"):
-     - `Em C:` só inclua se o comportamento do C for conhecido com certeza (ex:
-       recursão sem TCO, stack frame, layout de struct). Se não tiver certeza do
-       comportamento exato em C, omita — não vale a pena arriscar pra um adendo.
+     - `Em C:` **não confie na memória** — o comportamento de compiladores C reais
+       (GCC/Clang) inclui otimizações agressivas que contradizem intuição comum.
+       Exemplo real que já aconteceu aqui: afirmar que "C não faz tail call
+       optimization" é **falso** — GCC e Clang fazem TCO rotineiramente em
+       `-O2`/`-O3` para recursão de cauda simples (confirmado compilando e
+       inspecionando o assembly gerado, sem instrução `call` na recursão). O que é
+       verdade é que CPython **nunca** otimiza, por decisão de design — não que "C
+       também não otimiza". Antes de afirmar qualquer coisa sobre comportamento de
+       C, **compile um exemplo mínimo com `gcc -O2 -S` (ou `-O0` pra contraste) e
+       inspecione o assembly gerado** (`bash_tool` está disponível pra isso) — não
+       vale "eu sei que C faz assim". Se não for possível compilar e confirmar,
+       omita o item — não arrisque pra um adendo.
      - `Histórico:` precisa vir com o PEP ou versão específica que motivou a
        mudança, já citado nas Fontes Consultadas. Sem PEP/versão verificável,
        omita a linha em vez de inventar uma motivação genérica.
