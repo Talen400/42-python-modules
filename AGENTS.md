@@ -149,6 +149,24 @@ Como o repositório é público, mantenha também:
   frame, moulinette, norma, type hint, PEP). Isso evita reexplicar o básico em todo
   `concept.md` — cada um pode linkar pro glossário na primeira menção do termo.
 
+  **Formatação do glossário — importante**: cada termo é uma entrada de dicionário,
+  não uma seção. NÃO use `### termo` (heading) para cada palavra — isso renderiza
+  grande e em negrito no GitHub, como se fosse um subtítulo de capítulo, e com
+  dezenas de termos fica visualmente pesado. Use negrito inline dentro do parágrafo:
+
+  ```markdown
+  ## A
+
+  **annotation scope** — Escopo especial para anotações de tipo, type parameters e
+  type aliases (PEP 695, Python 3.12+). Comporta-se como escopo de função mas tem
+  acesso ao namespace da classe envolvente.
+
+  **arity** — Número de argumentos que uma função aceita.
+  ```
+
+  Só as letras (`## A`, `## B`, ...) usam heading, como âncora de navegação — os
+  termos em si ficam em texto normal com **negrito** no início da linha.
+
 ## O Que Evitar (erros já cometidos anteriormente)
 
 - Citar opcodes que não existem mais na versão atual (ex: `SETUP_LOOP`,
