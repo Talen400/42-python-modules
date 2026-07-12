@@ -23,7 +23,7 @@ fazer os exercícios. Eles existem para:
 
 ### Como usar
 
-1. Leia o subject do módulo (entenda o que é pedido)
+1. Leia o `en.subject.pdf` do módulo (entenda o que é pedido)
 2. Tente fazer os exercícios
 3. Consulte o `concept.md` para aprofundar conceitos ou entender por que algo não funciona
 4. Use as perguntas de autoavaliação para testar seu entendimento
@@ -52,7 +52,7 @@ module_04/          # File I/O
 Cada conceito é apresentado em **duas camadas**:
 
 1. **TL;DR** — explicação direta sem jargão, para leitura rápida
-2. **🔬 Aprofundamento** (dentro de `<details>`) — bytecode real, internals, edge cases
+2. **🔍 Aprofundamento** (dentro de `<details>`) — bytecode real, internals, edge cases
 
 Toda afirmação técnica carrega um badge de confiança:
 

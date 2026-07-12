@@ -26,7 +26,7 @@ incluindo Ctrl+C — evite.
 > ✅ Python 3.13 não usa mais `SETUP_FINALLY` ou `END_FINALLY` — sistema de exceção
 > reescrito no 3.11.
 >
-> Bytecode real de `try/except` básico:
+> [Bytecode](../GLOSSARY.md#bytecode) real de `try/except` básico:
 >
 > ```
 >   6           RESUME                   0
@@ -67,6 +67,10 @@ incluindo Ctrl+C — evite.
 > é a profundidade do bloco `try`.
 >
 > https://docs.python.org/3/library/dis.html
+>
+> **Conexões:**
+> - Histórico: Python 3.11 reescreveu o sistema de exceção — removeu `SETUP_FINALLY`/`END_FINALLY` e introduziu `PUSH_EXC_INFO` + `ExceptionTable`. Performance de `try` sem exceção passou de ~O(n) para O(1).
+> - Em C: `setjmp`/`longjmp` (C) vs `ExceptionTable` (Python). Em C, cada `try` empilha um `jmp_buf`; em Python 3.11+, o custo de entrar num `try` é zero até que uma exceção ocorra.
 
 </details>
 
@@ -102,7 +106,7 @@ match ganha. `except Exception:` captura erros comuns. `except:` captura tudo (m
 ### `raise` — Lançando Exceções
 
 **TL;DR**: `raise ValueError("mensagem")` para de executar e sobe o erro. Dentro de um
-`except`, `raise` (sem argumento) relança o mesmo erro com o traceback original.
+`except`, `raise` (sem argumento) relança o mesmo erro com o [traceback](../GLOSSARY.md#traceback) original.
 
 <details>
 <summary><strong>🔍 Aprofundando: RAISE_VARARGS, raise vs raise e, __cause__</strong></summary>
@@ -127,9 +131,9 @@ match ganha. `except Exception:` captura erros comuns. `except:` captura tudo (m
 >
 > **`raise` vs `raise e`**:
 > - `raise` (dentro de `except`) — relança exceção ativa preservando o traceback original
-> - `raise e` — cria novo traceback a partir do frame atual (perde o original)
+> - `raise e` — cria novo traceback a partir do [frame](../GLOSSARY.md#frame) atual (perde o original)
 >
-> `raise ... from` (PEP 3134) encadeia exceções via `__cause__`.
+> `raise ... from` ([PEP 3134](../GLOSSARY.md#pep)) encadeia exceções via `__cause__`.
 > https://docs.python.org/3/reference/simple_stmts.html#the-raise-statement
 
 </details>
@@ -179,6 +183,10 @@ match ganha. `except Exception:` captura erros comuns. `except:` captura tudo (m
 > **engolida**.
 >
 > https://docs.python.org/3/reference/compound_stmts.html#the-try-statement
+>
+> **Conexões:**
+> - Performance: o `finally` é duplicado no bytecode — 2× o mesmo código. Em C com `setjmp`/`longjmp`, o cleanup executaria uma vez só via `longjmp`. O trade-off do Python evita o custo do `setjmp` (que salva registradores) em troca de mais bytecode.
+> - Em C: `goto cleanup` pattern é o equivalente manual do `finally`. Em C você esquece; em Python o compilador duplica o bloco pra você.
 
 </details>
 
@@ -226,9 +234,9 @@ atributos extras.
 | Regra | Motivo |
 |-------|--------|
 | `try/except` obrigatório em todos | Foco em tratamento de erro |
-| `TypeError` com `mypy` | mypy acusa linha intencionalmente quebrada |
+| `TypeError` com [`mypy`](../GLOSSARY.md#mypy) | mypy acusa linha intencionalmente quebrada |
 | Custom exceptions herdam de `Exception` | Hierarquia padrão |
-| `finally` para cleanup | Pré-requisito para context managers (module_04) |
+| `finally` para cleanup | Pré-requisito para [context managers](../GLOSSARY.md#context-manager) (module_04) |
 
 ---
 

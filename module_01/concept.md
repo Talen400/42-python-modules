@@ -50,7 +50,7 @@ Dentro dos métodos, `self` é a própria instância.
 > 2. `Plant.__new__(Plant, ...)` aloca a instância
 > 3. `Plant.__init__(self, "Rose", 25, 30)` inicializa
 >
-> ✅ Bytecode real de `Plant.__init__()` (ex01) — `STORE_ATTR` com nome não mangleado
+> ✅ [Bytecode](../GLOSSARY.md#bytecode) real de `Plant.__init__()` (ex01) — `STORE_ATTR` com nome não mangleado
 > (o name mangling já foi resolvido na compilação):
 >
 > ```
@@ -71,6 +71,10 @@ Dentro dos métodos, `self` é a própria instância.
 > - `RETURN_CONST 0 (None)` — `__init__` não tem `return` explícito
 >
 > 📚 https://docs.python.org/3/reference/datamodel.html#object.__init__
+>
+> **Conexões:**
+> - Em C: `malloc()` + `init()` vs `__new__()` + `__init__()`. Em C você aloca e inicializa separadamente; Python explicita os dois passos mas esconde o `__new__` na prática.
+> - Diagrama: `Plant("Rose", 25, 30)` → `type.__call__` → `__new__` (aloca) → `__init__` (configura)
 
 </details>
 
@@ -84,8 +88,8 @@ função que opera na instância. Chamar `objeto.metodo()` automaticamente passa
 
 > Acesso a `self.height`:
 > 1. Busca em `instance.__dict__` — se achar, retorna
-> 2. Se não, busca no `__dict__` da classe (e sobe na MRO)
-> 3. Se encontrado na classe com `__get__` (descriptor), chama o descriptor
+> 2. Se não, busca no `__dict__` da classe (e sobe na [MRO](../GLOSSARY.md#mro))
+> 3. Se encontrado na classe com `__get__` ([descriptor](../GLOSSARY.md#descriptor-protocol)), chama o descriptor
 >
 > Bytecode real de `Plant.show()` (ex01):
 >
@@ -106,7 +110,7 @@ função que opera na instância. Chamar `objeto.metodo()` automaticamente passa
 
 **TL;DR**: Python não tem `private`. Use `_attr` pra dizer "isso é interno, não mexa".
 Use `__attr` só se precisar evitar conflito em herança (o Python renomeia pra
-`_Classe__attr` via name mangling). O subject **exige** `_attr` (protected convention), não `__attr`.
+`_Classe__attr` via [name mangling](../GLOSSARY.md#name-mangling)). O subject **exige** `_attr` ([protected convention](../GLOSSARY.md#protected-convention)), não `__attr`.
 
 <details>
 <summary><strong>🔍 Aprofundando: name mangling na compilação, empírico com dir()</strong></summary>
@@ -168,7 +172,7 @@ nunca são criados.
 > Python usa **C3 linearization** para MRO. Herança simples: `Flower → Plant → object`.
 > `super()` delega ao próximo na MRO.
 >
-> ✅ Bytecode real de `Flower.__init__()` (ex05) — `LOAD_SUPER_ATTR` (3.12+) é o opcode
+> ✅ Bytecode real de `Flower.__init__()` (ex05) — `LOAD_SUPER_ATTR` (3.12+) é o [opcode](../GLOSSARY.md#opcode)
 > dedicado para `super()`:
 >
 > ```
@@ -200,6 +204,10 @@ nunca são criados.
 > def show(self) -> str:
 >     return f"{super().show()}\nColor: {self._color}"
 > ```
+>
+> **Conexões:**
+> - Diagrama: MRO de `Flower("Rose", 25, 30, "red")` → `Flower` → `Plant` → `object`. `super().__init__` navega do `Flower` para `Plant` na cadeia.
+> - Em C: herança é composição de structs (struct Flower { struct Plant parent; ... }) vs MRO com lookup dinâmico em dicts.
 
 </details>
 

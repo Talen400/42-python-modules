@@ -25,7 +25,7 @@ não escrever `return`, retorna `None`.
 <details>
 <summary><strong>🔍 Aprofundando: bytecode, frame objects, object layout</strong></summary>
 
-> Uma função `def` compila para um code object contendo bytecode, constantes e nomes.
+> Uma função `def` compila para um code object contendo [bytecode](../GLOSSARY.md#bytecode), constantes e nomes.
 > Bytecode de `ft_hello_garden` (ex00):
 >
 > ```
@@ -37,15 +37,18 @@ não escrever `return`, retorna `None`.
 >               RETURN_CONST             0 (None)
 > ```
 >
-> Opcodes reais do Python 3.13:
+> [Opcodes](../GLOSSARY.md#opcode) reais do Python 3.13:
 > - ✅ `CALL` (não `CALL_FUNCTION` — removido no 3.11)
 > - ✅ `RETURN_CONST` (otimização 3.13+, vs `LOAD_CONST` + `RETURN_VALUE`)
 > - ✅ `RESUME` (3.11+, gerencia suspensão para generators/coroutines)
 >
-> Cada chamada de função empilha um novo frame na thread state. O frame contém o code
+> Cada chamada de função empilha um novo [frame](../GLOSSARY.md#frame) na thread state. O frame contém o code
 > object, `f_locals`, `f_globals`, e o frame anterior.
 >
 > Documentação: https://docs.python.org/3/reference/executionmodel.html
+>
+> **Conexões:**
+> - Em C: stack frame (RBP/RSP, alinhamento) vs Py frame (heap, refcount + code object + free vars). Ambos empilham, mas o frame Python sobrevive ao escopo se referenciado (ex: `sys._getframe()`).
 
 </details>
 
@@ -113,7 +116,7 @@ de chaves: `f"Olá, {nome}"`. O Python avalia a expressão e formata o resultado
 <details>
 <summary><strong>🔍 Aprofundando: PEP 498, PEP 701, bytecode, multiline caveats</strong></summary>
 
-> Desde Python 3.12 (PEP 701), f-strings permitem aninhamento arbitrário e reuso de aspas.
+> Desde Python 3.12 ([PEP 701](../GLOSSARY.md#pep)), f-strings permitem aninhamento arbitrário e reuso de aspas.
 >
 > Bytecode real de `ft_garden_name()` (ex01, f-string com `"""`):
 >
@@ -135,6 +138,9 @@ de chaves: `f"Olá, {nome}"`. O Python avalia a expressão e formata o resultado
 >
 > O `BUILD_STRING` concatena as partes. `FORMAT_SIMPLE` chama `__format__` na expressão.
 > **Atenção**: a indentação do bloco `"""` (espaços e `\n`) é **literal** na string final.
+>
+> **Conexões:**
+> - Histórico: PEP 498 (3.6) introduziu f-strings com limitação de aspas. PEP 701 (3.12) removeu a restrição, permitindo f-strings aninhadas e reuso do mesmo tipo de aspas.
 
 </details>
 
@@ -246,18 +252,22 @@ empilha um novo frame, e há um limite (~1000 chamadas).
 > como valor válido. Sem tail call optimization — `CALL` empilha novo frame.
 >
 > https://docs.python.org/3/library/sys.html#sys.getrecursionlimit
+>
+> **Conexões:**
+> - Em C: sem TCO tanto em C (GCC/clang) quanto em CPython. Cada chamada recursiva consome um frame na pilha C real, que é finita (~8MB no Linux).
+> - Performance: O(n) frames na pilha. Limite `sys.getrecursionlimit()` protege contra stack overflow do C.
 
 </details>
 
 ### Type Hints
 
-**TL;DR**: Type hints são "dicas" de tipo que você escreve nos parâmetros e retorno
-da função: `def f(x: int) -> str:`. O Python ignora em runtime, mas o `mypy` verifica.
+**TL;DR**: [Type hints](../GLOSSARY.md#type-hint) são "dicas" de tipo que você escreve nos parâmetros e retorno
+da função: `def f(x: int) -> str:`. O Python ignora em runtime, mas o [`mypy`](../GLOSSARY.md#mypy) verifica.
 
 <details>
 <summary><strong>🔍 Aprofundando: PEP 484, __annotations__, runtime irrelevance</strong></summary>
 
-> Introduzidos no PEP 484 (Python 3.5). Armazenados em `__annotations__` da função e
+> Introduzidos no [PEP 484](../GLOSSARY.md#pep) (Python 3.5). Armazenados em `__annotations__` da função e
 > **ignorados em runtime**. A verificação é feita por ferramentas externas (mypy, pyright).
 >
 > O subject torna type hints obrigatórios no ex07. Exemplo do código existente:
@@ -280,7 +290,7 @@ da função: `def f(x: int) -> str:`. O Python ignora em runtime, mas o `mypy` v
 | Regra | TL;DR | Por quê? |
 |-------|-------|----------|
 | Python 3.10+ | Versão mínima | Type union `X \| Y`, preparação para match/case |
-| flake8 | Linter obrigatório | Padrão 42: estilo consistente |
+| [flake8](../GLOSSARY.md#flake8) | Linter obrigatório | Padrão 42: estilo consistente |
 | Sem `if __name__` (ex0–6) | Sem bloco main | Arquivo precisa ser importável sem efeito colateral |
 | Type hints obrigatórios (ex07) | Anotações de tipo | mypy precisa delas pra verificar |
 | Sem `range()` antes do ex06 | Sem `for` | Força usar `while` e recursão |
@@ -295,7 +305,7 @@ Função mais simples: `print()` com string literal. Sem type hint. Retorno `Non
 
 ### ex01 — ft_garden_name.py
 `input()` + f-string com `"""`. A indentação do bloco (espaços e `\n`) aparece
-literal na saída — a moulinette compara exatamente.
+literal na saída — a [moulinette](../GLOSSARY.md#moulinette) compara exatamente.
 
 ### ex02 — ft_plot_area.py
 Operação: `int()` + multiplicação.

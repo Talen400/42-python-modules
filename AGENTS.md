@@ -5,7 +5,7 @@ Instruções para o agente trabalhar neste repositório (Python Modules — 42).
 ## Contexto do Projeto
 
 Este repositório contém os exercícios dos Python Modules da 42 (module_00 a module_10).
-Cada module possui um subject com o enunciado oficial e pastas `exXX/` com o
+Cada module possui um `en.subject.pdf` com o enunciado oficial e pastas `exXX/` com o
 código já implementado (quando existente).
 
 O objetivo do usuário é **estudar e revisar conceitos**, não gerar cola. O usuário já é
@@ -116,6 +116,49 @@ Estrutura esperada em cada `module_XX/concept.md`:
 
      </details>
      ```
+     Blocos de código dentro do blockquote também levam `>` antes dos ``` ``` ```
+     de abertura/fechamento, senão o recuo quebra no meio.
+
+     **Camada opcional de enriquecimento ("Conexões"):** ao final do bloco de
+     aprofundamento (ainda dentro do blockquote), pode incluir uma pequena lista
+     `> **Conexões:**` com até **2-3** dos seguintes tipos — nunca todos de uma vez,
+     e nunca em todo conceito. Escolha só o(s) que genuinamente agregam pra aquele
+     conceito específico; se nenhum agregar, omita a lista inteira:
+     - `Em C:` comparação direta com o equivalente em C/C++ (útil porque o usuário
+       vem do cursus de C da 42) — só quando a comparação é esclarecedora, não
+       forçada (ex: frame stack vs stack frame de C faz sentido; já forçar uma
+       comparação pra type hints não agrega)
+     - `Histórico:` uma frase sobre por que Python decidiu fazer assim (PEP,
+       versão, motivação de design) — só se não for redundante com o que já foi
+       dito no resto do bloco
+     - `Diagrama:` um diagrama pequeno em ASCII/Mermaid **só** quando a estrutura é
+       genuinamente espacial/hierárquica (MRO, frame stack, herança) — não force
+       diagrama em conceito que é só sequencial ou textual
+     - `Performance:` complexidade (Big O) ou custo de memória, só quando for
+       relevante e não óbvio
+
+     Cada item da lista é **uma linha, uma frase** — isso não é uma seção nova,
+     é um adendo rápido. Se a lista de Conexões ficar do tamanho do resto do
+     aprofundamento, é sinal de que passou do ponto — corte pela metade.
+
+     **Verificação obrigatória por tipo de Conexão** (mesmo padrão de rigor das
+     regras 3–5, não é "liberdade criativa"):
+     - `Em C:` só inclua se o comportamento do C for conhecido com certeza (ex:
+       recursão sem TCO, stack frame, layout de struct). Se não tiver certeza do
+       comportamento exato em C, omita — não vale a pena arriscar pra um adendo.
+     - `Histórico:` precisa vir com o PEP ou versão específica que motivou a
+       mudança, já citado nas Fontes Consultadas. Sem PEP/versão verificável,
+       omita a linha em vez de inventar uma motivação genérica.
+     - `Performance:` só cite Big O que seja derivável da própria estrutura do
+       código/algoritmo em questão — não invente número específico (ex: "3x mais
+       rápido") sem ter medido de verdade.
+     - `Diagrama:` menor risco (é estrutural, não uma afirmação factual nova), mas
+       ainda assim deve refletir a estrutura real do código do exercício, não uma
+       hierarquia genérica inventada.
+
+     Regra geral: se não for possível verificar um item de Conexão com a mesma
+     régua usada pro resto do concept.md, **omita o item** — uma lista de Conexões
+     menor (ou vazia) é sempre melhor que uma com afirmação inventada.
 - **Regras e restrições do subject** (normas, funções proibidas, versão exigida etc.)
   e o porquê delas existirem — explicado de forma que iniciante entenda a motivação,
   não só a regra
@@ -141,7 +184,7 @@ Como o repositório é público, mantenha também:
 
 - **`README.md`** na raiz explicando: o que é a 42 e a piscine de Python (breve),
   o que são os `concept.md` (material de estudo complementar, não solução), como
-  navegar (ler o subject do módulo primeiro, depois o `concept.md`), e um
+  navegar (ler o `en.subject.pdf` do módulo primeiro, depois o `concept.md`), e um
   aviso claro de que o conteúdo não substitui fazer os exercícios sozinho.
 - **`GLOSSARY.md`** na raiz com termos que se repetem entre módulos (ex: bytecode,
   frame, moulinette, norma, type hint, PEP). Isso evita reexplicar o básico em todo
@@ -150,20 +193,43 @@ Como o repositório é público, mantenha também:
   **Formatação do glossário — importante**: cada termo é uma entrada de dicionário,
   não uma seção. NÃO use `### termo` (heading) para cada palavra — isso renderiza
   grande e em negrito no GitHub, como se fosse um subtítulo de capítulo, e com
-  dezenas de termos fica visualmente pesado. Use negrito inline dentro do parágrafo:
+  dezenas de termos fica visualmente pesado. Use negrito inline dentro do parágrafo,
+  com uma **âncora HTML invisível** logo antes do termo (não aparece na tela, mas
+  permite link direto de outros arquivos):
 
   ```markdown
   ## A
 
-  **annotation scope** — Escopo especial para anotações de tipo, type parameters e
-  type aliases (PEP 695, Python 3.12+). Comporta-se como escopo de função mas tem
-  acesso ao namespace da classe envolvente.
+  <a id="annotation-scope"></a>**annotation scope** — Escopo especial para anotações
+  de tipo, type parameters e type aliases (PEP 695, Python 3.12+). Comporta-se como
+  escopo de função mas tem acesso ao namespace da classe envolvente.
 
-  **arity** — Número de argumentos que uma função aceita.
+  <a id="arity"></a>**arity** — Número de argumentos que uma função aceita.
   ```
 
-  Só as letras (`## A`, `## B`, ...) usam heading, como âncora de navegação — os
-  termos em si ficam em texto normal com **negrito** no início da linha.
+  Só as letras (`## A`, `## B`, ...) usam heading, como âncora de navegação geral —
+  os termos em si ficam em texto normal com **negrito**, precedidos da âncora `<a
+  id="...">`. O `id` é o termo em minúsculas, espaços viram hífen, sem acentos nem
+  parênteses (ex: "annotation scope" → `annotation-scope`; "PEP (Python Enhancement
+  Proposal)" → `pep`).
+
+  **Linkando do `concept.md` pro glossário**: na primeira menção de um termo que
+  existe no glossário (dentro de um mesmo conceito ou seção), transforme em link:
+  `[bytecode](../GLOSSARY.md#bytecode)`. Regras:
+  - Só a **primeira ocorrência** do termo em cada conceito vira link — repetir o
+    link toda vez que a palavra aparece polui o texto.
+  - Só linka se o termo **realmente existir** no `GLOSSARY.md` com esse `id` — não
+    invente âncora pra termo que não está lá.
+  - O caminho relativo depende de onde o `concept.md` está: de `module_XX/concept.md`
+    pra `GLOSSARY.md` na raiz, o caminho é `../GLOSSARY.md#id-do-termo`.
+  - Não linke termos comuns que não estão no glossário (ex: `print`, `int`) — só os
+    que genuinamente têm entrada lá.
+  - **Nunca linke termo dentro do `<summary>`** do bloco de aprofundamento. Um link
+    clicável dentro da linha do `<summary>` compete com o clique de
+    abrir/fechar o accordion — o usuário pode clicar querendo expandir e acabar
+    navegando pro glossário, ou vice-versa, de forma inconsistente entre
+    navegadores. O `<summary>` fica sempre texto puro (só o `🔍` + negrito); os
+    links de glossário só aparecem no corpo, dentro do blockquote.
 
 ## O Que Evitar (erros já cometidos anteriormente)
 
