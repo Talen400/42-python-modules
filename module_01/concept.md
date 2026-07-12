@@ -289,7 +289,7 @@ se é instância de `Tree`. Útil pra polimorfismo sem precisar de métodos virt
 
 | Regra | Por quê? |
 |-------|----------|
-| Python 3.10+ | match/case (PEP 634) |
+| Python 3.10+ | match/case ([PEP 634](../GLOSSARY.md#pep)) |
 | PascalCase classes / snake_case vars | PEP 8 |
 | `super()` autorizado | Herança |
 | `@staticmethod`, `@classmethod` autorizados | Decorator syntax |
