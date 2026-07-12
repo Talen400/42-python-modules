@@ -54,15 +54,12 @@ Dentro dos métodos, `self` é a própria instância.
 > (o name mangling já foi resolvido na compilação):
 >
 > ```
->   4           RESUME                   0
->   5           LOAD_FAST                1 (name)
->               LOAD_FAST                0 (self)
+>   3           RESUME                   0
+>   4           LOAD_FAST_LOAD_FAST     16 (name, self)
 >               STORE_ATTR               0 (name)
->   6           LOAD_FAST                2 (height)
->               LOAD_FAST                0 (self)
+>   5           LOAD_FAST_LOAD_FAST     32 (height, self)
 >               STORE_ATTR               1 (height)
->   7           LOAD_FAST                3 (age)
->               LOAD_FAST                0 (self)
+>   6           LOAD_FAST_LOAD_FAST     48 (age, self)
 >               STORE_ATTR               2 (age)
 >               RETURN_CONST             0 (None)
 > ```
@@ -95,12 +92,19 @@ função que opera na instância. Chamar `objeto.metodo()` automaticamente passa
 >
 > ```
 >   8           RESUME                   0
->   9           LOAD_CONST               1 ('')
->               LOAD_FAST                0 (self)
+>   9           LOAD_FAST                0 (self)
 >               LOAD_ATTR                0 (name)
 >               FORMAT_SIMPLE
->               ...
->               BUILD_STRING             4
+>               LOAD_CONST               1 (': ')
+>               LOAD_FAST                0 (self)
+>               LOAD_ATTR                2 (height)
+>               FORMAT_SIMPLE
+>               LOAD_CONST               2 ('cm, ')
+>               LOAD_FAST                0 (self)
+>               LOAD_ATTR                4 (age)
+>               FORMAT_SIMPLE
+>               LOAD_CONST               3 (' days old')
+>               BUILD_STRING             6
 >               RETURN_VALUE
 > ```
 

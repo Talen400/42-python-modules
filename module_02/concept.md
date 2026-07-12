@@ -149,31 +149,43 @@ match ganha. `except Exception:` captura erros comuns. `except:` captura tudo (m
 > Bytecode real de `try/except/else/finally`:
 >
 > ```
->  32           RESUME                   0
->  33           NOP
->  34   L1:     LOAD_CONST               1 (42)
->               STORE_FAST               0 (x)
->  38   L2:     NOP
->  40           LOAD_CONST               2 (1)
->               STORE_FAST               1 (y)
->               RETURN_CONST             3 ('ok')
->   --   L3:     PUSH_EXC_INFO
->  35           LOAD_GLOBAL              0 (ValueError)
->               CHECK_EXC_MATCH
->               POP_JUMP_IF_FALSE        5 (to L6)
->               POP_TOP
->  36   L4:     POP_EXCEPT
->  40   L5:     LOAD_CONST               2 (1)
->               STORE_FAST               1 (y)
->               RETURN_CONST             4 ('err')
->  35   L6:     RERAISE                  0
->   --   L7:     COPY                     3
->               POP_EXCEPT
->               RERAISE                  1
->        L8:     PUSH_EXC_INFO
->  40           LOAD_CONST               2 (1)
->               STORE_FAST               1 (y)
->               RERAISE                  0
+>   4            RESUME                   0
+>   5            NOP
+>   6    L1:     LOAD_CONST               1 (42)
+>                STORE_FAST               0 (x)
+>  11    L2:     LOAD_CONST               2 (1)
+>                STORE_FAST               1 (y)
+>  12    L3:     NOP
+>  14            LOAD_CONST               2 (1)
+>                STORE_FAST               1 (y)
+>                RETURN_CONST             3 ('ok')
+>   --    L4:     PUSH_EXC_INFO
+>   7            LOAD_GLOBAL              0 (ValueError)
+>                CHECK_EXC_MATCH
+>                POP_JUMP_IF_FALSE        7 (to L7)
+>                POP_TOP
+>   8            LOAD_CONST               2 (1)
+>                STORE_FAST               1 (y)
+>   9    L5:     POP_EXCEPT
+>  14    L6:     LOAD_CONST               2 (1)
+>                STORE_FAST               1 (y)
+>                RETURN_CONST             4 ('err')
+>   7    L7:     RERAISE                  0
+>   --    L8:     COPY                     3
+>                POP_EXCEPT
+>                RERAISE                  1
+>        L9:     PUSH_EXC_INFO
+>  14            LOAD_CONST               2 (1)
+>                STORE_FAST               1 (y)
+>                RERAISE                  0
+> ExceptionTable:
+>   L1 to L2 -> L4 [0]
+>   L2 to L3 -> L9 [0]
+>   L4 to L5 -> L8 [1] lasti
+>   L5 to L6 -> L9 [0]
+>   L7 to L8 -> L8 [1] lasti
+>   L8 to L9 -> L9 [0]
+>   L9 to L10 -> L10 [1] lasti
 > ```
 >
 > O código do `finally` aparece **duplicado** no bytecode: uma cópia pro caminho sem exceção

@@ -84,7 +84,20 @@ de forma que não intimide quem está começando.
    - https://docs.python.org/3/reference/ — referência da linguagem
    - https://docs.python.org/3/whatsnew/ — mudanças por versão
    - PEPs relevantes (ex: PEP 498, PEP 701, PEP 484) em https://peps.python.org/
-3. Se nenhuma das duas acima for possível, marcar como não verificado.
+3. **Código-fonte do CPython (para afirmações sobre internals em C, não cobertas
+   pela documentação de usuário)**:
+   - https://github.com/python/cpython — repositório oficial. Arquivos mais
+     relevantes pra afirmações de internals: `Python/ceval.c` (loop principal do
+     interpretador), `Python/compile.c` (compilador → bytecode), `Include/opcode.h`
+     e `Include/internal/pycore_opcode_metadata.h` (definição de opcodes por
+     versão), `Objects/*.c` (implementação dos tipos built-in).
+   - **Importante**: sempre confira a **tag/branch da versão correta** (ex:
+     `v3.13.1`), não a `main` — o `main` pode ter mudanças que ainda não existem
+     na versão que o repositório do usuário está usando.
+   - https://devguide.python.org/ — Python Developer's Guide, com documentação de
+     arquitetura voltada a quem contribui com o CPython (não é referência de uso,
+     é referência de implementação).
+4. Se nenhuma das opções acima for possível, marcar como não verificado.
 
 ## Ao Gerar/Revisar `concept.md`
 
