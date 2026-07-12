@@ -124,24 +124,17 @@ Estrutura esperada em cada `module_XX/concept.md`:
      `> **Conexões:**` com até **2-3** dos seguintes tipos — nunca todos de uma vez,
      e nunca em todo conceito. Escolha só o(s) que genuinamente agregam pra aquele
      conceito específico; se nenhum agregar, omita a lista inteira:
-     - `Em C:` comparação direta com o equivalente em C/C++ (útil porque o usuário
-       vem do cursus de C da 42) — só quando a comparação é esclarecedora, não
-       forçada
-     - `Histórico:` uma frase sobre por que Python decidiu fazer assim (PEP,
-       versão, motivação de design) — só se não for redundante
-     - `Diagrama:` um diagrama pequeno em ASCII/Mermaid **só** quando a estrutura é
-       genuinamente espacial/hierárquica (MRO, frame stack, herança)
-     - `Performance:` complexidade (Big O) ou custo de memória, só quando for
-       relevante e não óbvio
+     - `Em C:` comparação direta com o equivalente em C/C++
+     - `Histórico:` uma frase sobre por que Python decidiu fazer assim
+     - `Diagrama:` um diagrama pequeno em ASCII/Mermaid
+     - `Performance:` complexidade (Big O) ou custo de memória
 
-     Cada item da lista é **uma linha, uma frase** — isso não é uma seção nova,
-     é um adendo rápido.
+     Cada item da lista é **uma linha, uma frase**.
 
-     **Verificação obrigatória por tipo de Conexão** (mesmo padrão de rigor):
+     **Verificação obrigatória por tipo de Conexão:**
      - `Em C:` só inclua se o comportamento do C for conhecido com certeza
      - `Histórico:` precisa vir com PEP ou versão específica, já citado nas Fontes
-     - `Performance:` só cite Big O derivável da estrutura do código — não invente
-       número específico sem ter medido
+     - `Performance:` só cite Big O derivável da estrutura do código
      - `Diagrama:` deve refletir a estrutura real do código do exercício
 
      Se não for possível verificar um item, **omita-o**.
@@ -177,22 +170,28 @@ Como o repositório é público, mantenha também:
   `concept.md` — cada um pode linkar pro glossário na primeira menção do termo.
 
   **Formatação do glossário — importante**: cada termo é uma entrada de dicionário,
-  não uma seção. NÃO use `### termo` (heading) para cada palavra — isso renderiza
-  grande e em negrito no GitHub, como se fosse um subtítulo de capítulo, e com
-  dezenas de termos fica visualmente pesado. Use negrito inline dentro do parágrafo:
+  não uma seção. NÃO use `### termo` (heading) para cada palavra. Use negrito inline
+  dentro do parágrafo, com uma **âncora HTML invisível** logo antes do termo:
 
   ```markdown
   ## A
 
-  **annotation scope** — Escopo especial para anotações de tipo, type parameters e
-  type aliases (PEP 695, Python 3.12+). Comporta-se como escopo de função mas tem
-  acesso ao namespace da classe envolvente.
+  <a id="annotation-scope"></a>**annotation scope** — Escopo especial para anotações
+  de tipo, type parameters e type aliases (PEP 695, Python 3.12+).
 
-  **arity** — Número de argumentos que uma função aceita.
+  <a id="arity"></a>**arity** — Número de argumentos que uma função aceita.
   ```
 
-  Só as letras (`## A`, `## B`, ...) usam heading, como âncora de navegação — os
-  termos em si ficam em texto normal com **negrito** no início da linha.
+  Só as letras (`## A`, `## B`, ...) usam heading. O `id` é o termo em minúsculas,
+  espaços viram hífen, sem acentos nem parênteses.
+
+  **Linkando do `concept.md` pro glossário**: na primeira menção de um termo que
+  existe no glossário (dentro de um mesmo conceito ou seção), transforme em link:
+  `[bytecode](../GLOSSARY.md#bytecode)`. Regras:
+  - Só a **primeira ocorrência** do termo em cada conceito vira link.
+  - Só linka se o termo **realmente existir** no `GLOSSARY.md` com esse `id`.
+  - De `module_XX/concept.md` pra raiz: `../GLOSSARY.md#id-do-termo`.
+  - Não linke termos comuns que não estão no glossário (ex: `print`, `int`).
 
 ## O Que Evitar (erros já cometidos anteriormente)
 

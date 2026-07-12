@@ -21,7 +21,7 @@ sensores IoT, validação de dados, resiliência.
 incluindo Ctrl+C — evite.
 
 <details>
-<summary><strong>🔍 Aprofundando: bytecode em 3.13 (sem SETUP_FINALLY), ExceptionTable</strong></summary>
+<summary><strong>🔍 Aprofundando: [bytecode](../GLOSSARY.md#bytecode) em 3.13 (sem SETUP_FINALLY), ExceptionTable</strong></summary>
 
 > ✅ Python 3.13 não usa mais `SETUP_FINALLY` ou `END_FINALLY` — sistema de exceção
 > reescrito no 3.11.
@@ -106,7 +106,7 @@ match ganha. `except Exception:` captura erros comuns. `except:` captura tudo (m
 ### `raise` — Lançando Exceções
 
 **TL;DR**: `raise ValueError("mensagem")` para de executar e sobe o erro. Dentro de um
-`except`, `raise` (sem argumento) relança o mesmo erro com o traceback original.
+`except`, `raise` (sem argumento) relança o mesmo erro com o [traceback](../GLOSSARY.md#traceback) original.
 
 <details>
 <summary><strong>🔍 Aprofundando: RAISE_VARARGS, raise vs raise e, __cause__</strong></summary>
@@ -131,9 +131,9 @@ match ganha. `except Exception:` captura erros comuns. `except:` captura tudo (m
 >
 > **`raise` vs `raise e`**:
 > - `raise` (dentro de `except`) — relança exceção ativa preservando o traceback original
-> - `raise e` — cria novo traceback a partir do frame atual (perde o original)
+> - `raise e` — cria novo traceback a partir do [frame](../GLOSSARY.md#frame) atual (perde o original)
 >
-> `raise ... from` (PEP 3134) encadeia exceções via `__cause__`.
+> `raise ... from` ([PEP 3134](../GLOSSARY.md#pep)) encadeia exceções via `__cause__`.
 > https://docs.python.org/3/reference/simple_stmts.html#the-raise-statement
 
 </details>
@@ -234,9 +234,9 @@ atributos extras.
 | Regra | Motivo |
 |-------|--------|
 | `try/except` obrigatório em todos | Foco em tratamento de erro |
-| `TypeError` com mypy | mypy acusa linha intencionalmente quebrada |
+| `TypeError` com [`mypy`](../GLOSSARY.md#mypy) | mypy acusa linha intencionalmente quebrada |
 | Custom exceptions herdam de `Exception` | Hierarquia padrão |
-| `finally` para cleanup | Pré-requisito para context managers (module_04) |
+| `finally` para cleanup | Pré-requisito para [context managers](../GLOSSARY.md#context-manager) (module_04) |
 
 ---
 
