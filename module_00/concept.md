@@ -254,7 +254,7 @@ empilha um novo frame, e há um limite (~1000 chamadas).
 > https://docs.python.org/3/library/sys.html#sys.getrecursionlimit
 >
 > **Conexões:**
-> - Em C: sem TCO tanto em C (GCC/clang) quanto em CPython. Cada chamada recursiva consome um frame na pilha C real, que é finita (~8MB no Linux).
+> - Em C: GCC/Clang **fazem** TCO sim (em `-O2`/`-O3` — a chamada de cauda vira `jmp`, sem novo frame). Quem **não faz** TCO é o CPython, por decisão de design. Cada chamada recursiva em Python empilha um frame na pilha C real (~8MB no Linux), daí o `RecursionError`.
 > - Performance: O(n) frames na pilha. Limite `sys.getrecursionlimit()` protege contra stack overflow do C.
 
 </details>
