@@ -19,10 +19,10 @@ class Plant:
             height: float = 0,
             ages: int = 0,
             growth: float = 1):
-        self.__name: str = name
-        self.__height: float = 0.0
-        self.__ages: int = 0
-        self.__growth: float = 0
+        self._name: str = name
+        self._height: float = 0.0
+        self._ages: int = 0
+        self._growth: float = 0
 
         self._stats = self._Stats()
 
@@ -43,45 +43,45 @@ class Plant:
 
     # settres and getters
     def set_name(self, name: str) -> None:
-        self.__name = name
+        self._name = name
 
     def get_name(self) -> str:
-        return self.__name
+        return self._name
 
     def set_height(self, height: float) -> None:
         if height < 0:
             print(f"{self.get_name()}: Error, height can't be negative")
             return
-        self.__height = height
+        self._height = height
 
     def get_height(self) -> float:
-        return self.__height
+        return self._height
 
     def set_ages(self, ages: int) -> None:
         if ages < 0:
             print(f"{self.get_name()}: Error, age can't be negative")
             return
-        self.__ages = ages
+        self._ages = ages
 
     def get_ages(self) -> int:
-        return self.__ages
+        return self._ages
 
     def set_growth(self, growth: float) -> None:
         if growth < 0.0:
             print(f"{self.get_name()}: Error, growth can't be negative")
             return
-        self.__growth = growth
+        self._growth = growth
 
     def get_growth(self) -> float:
-        return self.__growth
+        return self._growth
 
     def grow(self) -> None:
         self._stats.grow_count += 1
-        self.__height += self.__growth
+        self._height += self._growth
 
     def age(self) -> None:
         self._stats.age_count += 1
-        self.__ages += 1
+        self._ages += 1
 
     def show(self) -> str:
         self._stats.show_count += 1
@@ -102,16 +102,16 @@ class Flower(Plant):
             color: str = "Red"
             ) -> None:
         super().__init__(name, height, ages, growth)
-        self.__color: str = ""
+        self._color: str = ""
         self.set_color(color)
 
         self._has_bloomed: bool = False
 
     def set_color(self, color: str) -> None:
-        self.__color = color
+        self._color = color
 
     def get_color(self) -> str:
-        return self.__color
+        return self._color
 
     def bloom(self) -> None:
         self._has_bloomed = True
@@ -153,7 +153,7 @@ class Tree(Plant):
             trunk_diameter: float = 1.0
             ) -> None:
         super().__init__(name, height, ages, growth)
-        self.__trunk_diameter: float = 0.0
+        self._trunk_diameter: float = 0.0
         self.set_trunk_diameter(trunk_diameter)
 
         self._stats: "Tree._TreeStats" = self._TreeStats()
@@ -164,16 +164,16 @@ class Tree(Plant):
                 f"{self.get_name()}: "
                 f"Error, trunk_diameter can't be negative")
             return
-        self.__trunk_diameter = trunk_diameter
+        self._trunk_diameter = trunk_diameter
 
     def get_trunk_diameter(self) -> float:
-        return self.__trunk_diameter
+        return self._trunk_diameter
 
     def produce_shade(self) -> None:
         self._stats.shade_count += 1
         print(
             f"{super().get_name()} provides "
-            f"{self.__trunk_diameter * 8} "
+            f"{self._trunk_diameter * 8} "
             f"square meters of shade")
 
     def show(self) -> str:
@@ -194,15 +194,15 @@ class Seed(Flower):
             color: str = "Yellow"
             ) -> None:
         super().__init__(name, height, ages, growth, color)
-        self.__seeds_count: int = 0
+        self._seeds_count: int = 0
 
     def bloom(self) -> None:
         super().bloom()
-        self.__seeds_count = 42
+        self._seeds_count = 42
 
     def show(self) -> str:
         base_flower_show = super().show()
-        return f"{base_flower_show}\nSeeds: {self.__seeds_count}"
+        return f"{base_flower_show}\nSeeds: {self._seeds_count}"
 
 
 def display_plant_stats(plant: Plant) -> None:
@@ -238,10 +238,9 @@ if __name__ == "__main__":
     sunflower = Seed("Sunflower", 80.0, 45, 30.0, "yellow")
     print(sunflower.show())
     print("[make sunflower grow, age and bloom]")
-    sunflower.set_ages(64)
-
-    sunflower.grow()
-    sunflower.age()
+    for _ in range(20):
+        sunflower.grow()
+        sunflower.age()
     sunflower.bloom()
     print(sunflower.show())
     display_plant_stats(sunflower)

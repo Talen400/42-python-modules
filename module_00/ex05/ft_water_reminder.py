@@ -3,4 +3,4 @@ def ft_water_reminder() -> None:
     if (last > 2):
         print("Water the plants!")
     else:
-        print("PLants are fine")
+        print("Plants are fine")
