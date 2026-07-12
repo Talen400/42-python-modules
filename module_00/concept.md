@@ -1,21 +1,32 @@
-# Module 00 — Python Fundamentals (Growing Code)
+# Module 00 — Python Fundamentals
 
 **Ambiente**: Python 3.13.1 | Verificado em: 2026-07-12
 
+---
+
 ## Objetivo do Módulo
 
-Introduzir sintaxe fundamental do Python: expressões, variáveis, funções, controle de fluxo e type hints.
-Tema "community garden" para exercitar entrada/saída, conversão de tipos, condicionais, loops, recursão
-e anotações de tipo. Proibido usar `if __name__`, classes ou módulos nos primeiros 7 exercícios.
+Você vai escrever funções simples que manipulam dados de uma horta comunitária:
+pedir entradas com `input()`, converter tipos com `int()`, usar `if` para decisões,
+`while` para repetições, e até recursão. No último exercício, type hints obrigatórios.
+
+Tudo isso **sem** `if __name__` e **sem** classes — só funções puras.
+
+---
 
 ## Conceitos-Chave
 
 ### Funções
 
-Uma função `def` é compilada para um objeto função contendo um code object (`__code__`) com o bytecode,
-constantes e nomes. Quando chamada, um novo frame é empilhado na thread state.
+**TL;DR**: Uma função é um bloco de código nomeado que você pode chamar de qualquer lugar.
+`def` define, `return` devolve um valor. Toda função em Python retorna algo — se você
+não escrever `return`, retorna `None`.
 
-Bytecode real de `ft_hello_garden()` (ex00):
+<details>
+<summary><strong>🔍 Aprofundando: bytecode, frame objects, object layout</strong></summary>
+
+Uma função `def` compila para um code object contendo bytecode, constantes e nomes.
+Bytecode de `ft_hello_garden` (ex00):
 
 ```
   1           RESUME                   0
@@ -26,48 +37,85 @@ Bytecode real de `ft_hello_garden()` (ex00):
               RETURN_CONST             0 (None)
 ```
 
-**Opcodes importantes**:
-- `CALL` (não `CALL_FUNCTION`!) — opcode único de chamada desde Python 3.11
-- `RETURN_CONST` — otimização 3.13+ para retornar constantes (vs `LOAD_CONST` + `RETURN_VALUE`)
-- `RESUME` — gerencia pontos de suspensão para generators/coroutines (3.11+)
+Opcodes reais do Python 3.13:
+- ✅ `CALL` (não `CALL_FUNCTION` — removido no 3.11)
+- ✅ `RETURN_CONST` (otimização 3.13+, vs `LOAD_CONST` + `RETURN_VALUE`)
+- ✅ `RESUME` (3.11+, gerencia suspensão para generators/coroutines)
 
-O subject exige **apenas funções** (ex0–ex6) e proíbe `if __name__`. A moulinette importa o arquivo
-e chama a função diretamente. Código solto no módulo executa no `import`, causando side effects.
+Cada chamada de função empilha um novo frame na thread state. O frame contém o code
+object, `f_locals`, `f_globals`, e o frame anterior.
 
-### `print()` — Internals
+Documentação: https://docs.python.org/3/reference/executionmodel.html
 
-`print()` é implementada em C (`builtin_print_impl`). Ela:
+</details>
+
+### `print()`
+
+**TL;DR**: `print()` escreve texto no terminal. Aceita vários argumentos separados por
+espaço, e coloca uma quebra de linha (`\n`) no final. Dá pra mudar o separador com `sep`
+e o final com `end`.
+
+<details>
+<summary><strong>🔍 Aprofundando: implementação C, buffering, softspace</strong></summary>
+
+`print()` é implementada em C (`builtin_print_impl`):
 1. Escreve cada argumento via `sys.stdout.write()`, separando com `sep` (default `' '`)
-2. Adiciona `end` (default `'\n'`) no final
+2. Adiciona `end` (default `'\n'`)
 3. `flush=True` força `fflush()` no buffer
 
-O espaçamento entre argumentos é gerenciado internamente pela implementação C — **não** usa
-`sys.stdout.softspace` (atributo removido do Python 3). A documentação oficial confirma que `print()`
-chama `sys.stdout.write()` para cada argumento.
+O espaçamento é gerenciado internamente pela implementação — **não** usa
+`sys.stdout.softspace` (atributo removido do Python 3, existia apenas no Python 2).
 
-**Fontes**: https://docs.python.org/3/library/functions.html#print
+Documentação: https://docs.python.org/3/library/functions.html#print
 
-### `input()` — Leitura do stdin
+</details>
 
-`input(prompt)` escreve o prompt em **stderr** (não stdout!), lê até `\n`, remove o newline e retorna
-`str`. O prompt só aparece se stdin for TTY. A implementação usa `PyOS_Readline()` que chama GNU readline
-quando disponível.
+### `input()`
 
-**Fontes**: https://docs.python.org/3/library/functions.html#input
+**TL;DR**: `input("pergunta: ")` mostra uma pergunta no terminal e espera o usuário
+digitar algo. O que for digitado volta como string.
+
+<details>
+<summary><strong>🔍 Aprofundando: PyOS_Readline, stderr, EOF</strong></summary>
+
+✅ `input(prompt)` escreve o prompt em **stderr** (não stdout!), lê até `\n`, remove
+o newline e retorna `str`. O prompt só aparece se stdin for TTY.
+
+A implementação usa `PyOS_Readline()` que chama GNU readline quando disponível.
+
+Documentação: https://docs.python.org/3/library/functions.html#input
+
+</details>
 
 ### Conversão de Tipos — `int()`
 
-`int(x)` aceita `str`, `float`, `bytes` ou objetos com `__int__()`. Para strings, parseia dígitos
-decimais com sinal opcional. Rejeita espaços, floats (ex: `"3.14"`), hex sem base explícita.
+**TL;DR**: `int("42")` pega uma string que parece número e vira um inteiro de verdade.
+Se a string não for um número válido, dá erro.
 
-O subject não exige validação (undefined behavior para entradas inválidas). A moulinette pode testar
-com entradas válidas — a validação vira requisito em module_02.
+<details>
+<summary><strong>🔍 Aprofundando: parsing, erros comuns, base</strong></summary>
 
-### f-strings (PEP 498 / PEP 701)
+`int(x)` aceita `str`, `float`, `bytes` ou objetos com `__int__()`. Para strings,
+parseia dígitos decimais com sinal opcional. Rejeita espaços, floats (`"3.14"`), hex
+sem base explícita.
+
+`int("0b1010", 2)` funciona e retorna 10 (confirmado em REPL).
+
+Documentação: https://docs.python.org/3/library/functions.html#int
+
+</details>
+
+### f-strings
+
+**TL;DR**: f-strings são strings com `f"..."` que permitem enfiar expressões dentro
+de chaves: `f"Olá, {nome}"`. O Python avalia a expressão e formata o resultado.
+
+<details>
+<summary><strong>🔍 Aprofundando: PEP 498, PEP 701, bytecode, multiline caveats</strong></summary>
 
 Desde Python 3.12 (PEP 701), f-strings permitem aninhamento arbitrário e reuso de aspas.
 
-Bytecode real de `ft_garden_name()` (ex01):
+Bytecode real de `ft_garden_name()` (ex01, f-string com `"""`):
 
 ```
   2           LOAD_GLOBAL              1 (input + NULL)
@@ -85,10 +133,18 @@ Bytecode real de `ft_garden_name()` (ex01):
               RETURN_CONST             0 (None)
 ```
 
-O `BUILD_STRING` concatena as partes da f-string. `FORMAT_SIMPLE` chama `str()` / `__format__` na
-expressão interpolada. A indentação do bloco `"""` (espaços e newlines) é **literal** na string final.
+O `BUILD_STRING` concatena as partes. `FORMAT_SIMPLE` chama `__format__` na expressão.
+⚠️ Atenção: a indentação do bloco `"""` (espaços e `\n`) é **literal** na string final.
+
+</details>
 
 ### Condicionais — `if` / `else`
+
+**TL;DR**: `if condição:` executa um bloco se a condição for verdadeira. `else:` executa
+outro bloco se for falsa. `elif:` encadeia condições.
+
+<details>
+<summary><strong>🔍 Aprofundando: bytecode COMPARE_OP, POP_JUMP_IF_FALSE em 3.13</strong></summary>
 
 Bytecode real de `ft_plant_age()` (ex04):
 
@@ -108,19 +164,29 @@ Bytecode real de `ft_plant_age()` (ex04):
               POP_TOP
               RETURN_CONST             0 (None)
   6   L1:     LOAD_GLOBAL              5 (print + NULL)
-              LOAD_CONST               4 ('Plant needs more time to grow')
-              CALL                     1
-              POP_TOP
-              RETURN_CONST             0 (None)
+              ...
 ```
 
-`COMPARE_OP` com argumento `148` inclui o bit `bool` (bit 4 = 16) desde Python 3.13, forçando
-conversão a bool — a comparação agora sempre produz `True`/`False`. `POP_JUMP_IF_FALSE` pula
-para o `else` se a condição for falsa.
+✅ `COMPARE_OP` com argumento `148` inclui o bit `bool` (bit 4 = 16) desde Python 3.13,
+forçando o resultado a `True`/`False`.
+
+Documentação: https://docs.python.org/3/reference/compound_stmts.html#the-if-statement
+
+</details>
 
 ### Loops — `while`
 
-O `while` em Python 3.13 compila sem `SETUP_LOOP` (removido no 3.8). Exemplo genérico:
+**TL;DR**: `while condição:` repete um bloco enquanto a condição for verdadeira.
+Tome cuidado pra não fazer um loop infinito (a condição precisa se tornar falsa em
+algum momento).
+
+<details>
+<summary><strong>🔍 Aprofundando: bytecode sem SETUP_LOOP, JUMP_BACKWARD</strong></summary>
+
+⚠️ O `while` em Python 3.13 compila **sem** `SETUP_LOOP` — opcode removido no Python 3.8.
+Usa `POP_JUMP_IF_FALSE` + `JUMP_BACKWARD`.
+
+Exemplo genérico:
 
 ```
  13           LOAD_FAST_LOAD_FAST     16 (x, n)
@@ -130,33 +196,34 @@ O `while` em Python 3.13 compila sem `SETUP_LOOP` (removido no 3.8). Exemplo gen
               LOAD_CONST               2 (1)
               BINARY_OP               13 (+=)
               STORE_FAST               1 (x)
- 13           LOAD_FAST_LOAD_FAST     16 (x, n)
-              COMPARE_OP              18 (bool(<))
+ 13           COMPARE_OP              18 (bool(<))
               POP_JUMP_IF_FALSE        2 (to L2)
               JUMP_BACKWARD           12 (to L1)
  15   L2:     ...
 ```
 
-- `POP_JUMP_IF_FALSE` + `JUMP_BACKWARD` substituem `SETUP_LOOP`
-- `JUMP_BACKWARD` (3.11+) verifica interrupts (Ctrl+C)
-- `BINARY_OP` com oparg `13` corresponde a `+=` (operador in-place)
+`JUMP_BACKWARD` (3.11+) verifica interrupts (Ctrl+C).
+https://docs.python.org/3/library/dis.html#opcode-JUMP_BACKWARD
 
-**Fontes**: https://docs.python.org/3/library/dis.html#opcode-JUMP_BACKWARD
+</details>
 
-### Recursão em CPython
+### Recursão
 
-CPython **não otimiza** tail recursion. Cada chamada recursiva empilha um frame no C stack e no
-Py frame stack. O limite padrão: `sys.getrecursionlimit()` = 1000 (confirmado).
+**TL;DR**: Uma função que chama a si mesma. Útil para problemas que podem ser quebrados
+em partes menores (mesmo problema). Mas CPython **não otimiza** recursão — cada chamada
+empilha um novo frame, e há um limite (~1000 chamadas).
+
+<details>
+<summary><strong>🔍 Aprofundando: sem TCO, sentinel pattern, frame stack, RecursionError</strong></summary>
+
+✅ CPython não otimiza tail recursion. Cada chamada recursiva empilha um frame no C stack
+e no Py frame stack.
+
+Limite padrão: `sys.getrecursionlimit()` = 1000 (confirmado em REPL).
 
 Bytecode real de `ft_count_harvest_recursive()` (ex06):
 
 ```
-  1           RESUME                   0
-  2           LOAD_FAST                1 (days)
-              POP_JUMP_IF_NOT_NONE    20 (to L1)
-  3           LOAD_GLOBAL              1 (int + NULL)
-              LOAD_GLOBAL              3 (input + NULL)
-              ...
   4   L1:     LOAD_FAST_LOAD_FAST      1 (day, days)
               COMPARE_OP             148 (bool(>))
               POP_JUMP_IF_FALSE       12 (to L2)
@@ -175,83 +242,101 @@ Bytecode real de `ft_count_harvest_recursive()` (ex06):
               RETURN_CONST             0 (None)
 ```
 
-O sentinel pattern (`days: int | None = None`) é o padrão idiomático. A chamada recursiva
-aparece como `CALL` — sem tail call optimization.
+O sentinel pattern (`days: int | None = None`) é o idiomático: evita confundir `None`
+como valor válido. Sem tail call optimization — `CALL` empilha novo frame.
 
-**Fontes**: https://docs.python.org/3/library/sys.html#sys.getrecursionlimit
+https://docs.python.org/3/library/sys.html#sys.getrecursionlimit
 
-### Type Hints (PEP 484)
+</details>
 
-Type hints são armazenados em `__annotations__` da função e **ignorados em runtime**. A verificação
-é feita por mypy/pyright.
+### Type Hints
 
+**TL;DR**: Type hints são "dicas" de tipo que você escreve nos parâmetros e retorno
+da função: `def f(x: int) -> str:`. O Python ignora em runtime, mas o `mypy` verifica.
+
+<details>
+<summary><strong>🔍 Aprofundando: PEP 484, __annotations__, runtime irrelevance</strong></summary>
+
+Introduzidos no PEP 484 (Python 3.5). Armazenados em `__annotations__` da função e
+**ignorados em runtime**. A verificação é feita por ferramentas externas (mypy, pyright).
+
+O subject torna type hints obrigatórios no ex07. Exemplo do código existente:
 ```python
 def ft_seed_inventory(seed_type: str, quantity: int, unit: str) -> None:
 ```
 
-`-> None` indica que a função não retorna valor. O código usa `str.capitalize()` que retorna o
-primeiro caractere em maiúsculo e o resto em minúsculo — confirmado: `"ß".capitalize()` → `"Ss"`.
+`str.capitalize()` — primeiro caractere maiúsculo, resto minúsculo.
+Confirmado: `"ß".capitalize()` → `"Ss"`, `"résumé".capitalize()` → `"Résumé"`.
 
-**Fontes**: https://docs.python.org/3/library/stdtypes.html#str.capitalize
+https://docs.python.org/3/library/stdtypes.html#str.capitalize
 
-## Regras e Restrições do Subject
+</details>
 
-| Regra | Motivo |
-|-------|--------|
-| Python 3.10+ | Type union `X \| Y`, match/case (preparação) |
-| flake8 | Padrão 42: E9, F, W, E501 |
-| Sem `if __name__` (ex0–6) | Arquivo deve ser importável sem side effects |
-| Type hints obrigatórios (ex07) | Pré-requisito para mypy |
-| Sem `range()` antes do ex06 | Força while/recursão |
-| `int()` sem validação | Undefined behavior — simplifica introdutórios |
+---
 
-## Correlação com Exercícios Existentes
+## Regras do Subject
+
+| Regra | TL;DR | Por quê? |
+|-------|-------|----------|
+| Python 3.10+ | Versão mínima | Type union `X \| Y`, preparação para match/case |
+| flake8 | Linter obrigatório | Padrão 42: estilo consistente |
+| Sem `if __name__` (ex0–6) | Sem bloco main | Arquivo precisa ser importável sem efeito colateral |
+| Type hints obrigatórios (ex07) | Anotações de tipo | mypy precisa delas pra verificar |
+| Sem `range()` antes do ex06 | Sem `for` | Força usar `while` e recursão |
+| `int()` sem validação | Não trate erros de entrada | Undefined behavior — simplifica exercícios |
+
+---
+
+## Correlação com Exercícios
 
 ### ex00 — ft_hello_garden.py
-Função mais simples: `print()` com string literal. Sem type hint (opcional). Retorno `None` implícito.
+Função mais simples: `print()` com string literal. Sem type hint. Retorno `None` implícito.
 
 ### ex01 — ft_garden_name.py
-`input()` + f-string com `"""`. A indentação do bloco (espaços e `\n`) aparece literal na saída —
-pode ser pego pela moulinette em comparação exata.
+`input()` + f-string com `"""`. A indentação do bloco (espaços e `\n`) aparece
+literal na saída — a moulinette compara exatamente.
 
 ### ex02 — ft_plot_area.py
-**Bug corrigido**: `lenght` → `length`. Operação: `int()` + multiplicação dentro da f-string.
-Uso de variáveis `length` e `width` sem validação de tipo.
+Operação: `int()` + multiplicação.
 
 ### ex03 — ft_harvest_total.py
-**Bug corrigido**: `"Dau"` → `"Day"`. Três entradas somadas diretamente.
+Três entradas somadas diretamente.
 
 ### ex04 — ft_plant_age.py
-Condicional `if age > 60` (parênteses desnecessários). `COMPARE_OP` com coerção a bool.
+Condicional `if age > 60` (parênteses são desnecessários em Python).
 
 ### ex05 — ft_water_reminder.py
-**Bug corrigido**: `"PLants"` → `"Plants"`. Condicional `> 2` (strict). Valor exato 2 cai no else.
+Condicional `> 2` (strict).
 
 ### ex06 — ft_count_harvest_iterative.py / recursive.py
-**Problema**: iterativo imprime ordem **decrescente** (5, 4, 3...) enquanto o subject espera
-ordem **crescente** (Day 1, Day 2...). Recursivo está correto com sentinel pattern.
+Iterativo: imprime ordem decrescente. Recursivo: sentinel pattern.
 
 ### ex07 — ft_seed_inventory.py
-**Bug corrigido**: `"Unknow"` → `"Unknown"`. Primeiro com type hints obrigatórios.
+Primeiro com type hints obrigatórios.
 `if unit not in ["packets", "grams", "area"]` — verifica lista (O(n) para 3 itens).
+
+---
 
 ## Erros Comuns
 
-1. Confundir `print()` com `return`
-2. `while` imprimindo ordem decrescente vs crescente
-3. f-string multilinha com indentação — espaços extras são literais
-4. Typos em prompts: `lenght`, `Dau`, `Unknow`, `PLants`
-5. RecursionError para `days > 1000`
-6. `__name__` solto fora de função — moulinette importa e executa
+- Confundir `print()` com `return` (a função deve **imprimir**, não retornar)
+- `while` imprimindo ordem decrescente vs crescente
+- f-string multilinha com indentação — espaços extras são literais
+- RecursionError para `days > 1000`
+- Código solto fora de função — moulinette importa e executa
+
+---
 
 ## Perguntas de Autoavaliação
 
 - Por que o subject proíbe `if __name__ == "__main__":` nos ex0–6?
-- O que acontece se `int()` receber uma string vazia? E `3.14`?
-- `print(f"{x}")` vs `print(x)` — o bytecode gerado é diferente?
-- Por que CPython não otimiza tail recursion? O que acontece com o C stack?
-- `"hello".capitalize()` vs `"hello".title()` — qual a diferença para strings com maiúsculas no meio?
-- `"hello world".capitalize()` → qual o resultado exato?
+- O que `int("3.14")` faz? E `int("")`?
+- `print(f"{x}")` vs `print(x)` — o bytecode gerado é diferente? Qual mais rápido?
+- Por que CPython não otimiza tail recursion? O que acontece no C stack?
+- `"hello".capitalize()` vs `"hello".title()` — diferença pra "hello world"?
+- O que acontece se a função recursiva do ex06 receber `days=0`?
+
+---
 
 ## Fontes Consultadas
 
@@ -262,6 +347,7 @@ ordem **crescente** (Day 1, Day 2...). Recursivo está correto com sentinel patt
 - https://docs.python.org/3/library/dis.html
 - https://docs.python.org/3/library/sys.html#sys.getrecursionlimit
 - https://docs.python.org/3/reference/executionmodel.html
+- https://docs.python.org/3/reference/compound_stmts.html
 - https://docs.python.org/3/whatsnew/3.13.html
 - https://peps.python.org/pep-0484/ (Type Hints)
 - https://peps.python.org/pep-0498/ (f-strings)

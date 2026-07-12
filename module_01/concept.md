@@ -1,38 +1,57 @@
-# Module 01 — Object-Oriented Garden Systems (Code Cultivation)
+# Module 01 — Object-Oriented Programming
 
 **Ambiente**: Python 3.13.1 | Verificado em: 2026-07-12
 
+---
+
 ## Objetivo do Módulo
 
-Evoluir de scripts simples para OOP: classes, herança, encapsulamento, polimorfismo, static/class methods,
-nested classes e pattern matching (`match/case`). O tema "digital garden ecosystem" constrói um sistema
-coeso de gerenciamento de plantas, progredindo de uma única classe até uma hierarquia com estatísticas
-internas.
+Você vai evoluir de funções soltas para um sistema com classes, herança, encapsulamento e
+polimorfismo. Tema "digital garden ecosystem": começa com uma classe `Plant`, depois `Flower`
+e `Tree` (herança), métodos especiais (`@staticmethod`, `@classmethod`), nested classes,
+e `match/case` para despacho polimórfico.
+
+---
 
 ## Conceitos-Chave
 
-### `if __name__ == "__main__":` — O Ponto de Entrada
+### `if __name__ == "__main__":`
 
-Quando Python executa um arquivo, `__name__` é definido como `"__main__"`. Quando importado, `__name__`
-vira o nome do módulo. O guard permite que o mesmo arquivo sirva como script e módulo importável.
+**TL;DR**: Esse bloco só executa quando o arquivo é rodado diretamente (não quando importado).
+Em module_00 era proibido; aqui é permitido. Serve pra ter código de teste ou demo dentro
+do mesmo arquivo sem poluir quem importa.
 
-O subject do ex00 reintroduz esse padrão (proibido em module_00). A mudança sinaliza que agora os
-exercícios podem ter código executável além de definições. O shebang (`#!/usr/bin/env python3`) também
-é citado: ele instrui o kernel a usar o interpretador Python para executar o script via `chmod +x`.
+<details>
+<summary><strong>🔍 Aprofundando: `__name__`, pontos de entrada, shebang</strong></summary>
 
-### Classes e Objetos (Data Model)
+Quando Python executa um arquivo, `__name__` é `"__main__"`. Quando importado, vira o
+nome do módulo. O guard permite que o mesmo arquivo sirva como script e módulo importável.
 
-`class Plant:` é um bloco executado em namespace separado pela metaclasse `type`. O corpo da classe
-vira `__dict__` da classe. Métodos são funções armazenadas no `__dict__` — o **descriptor protocol**
-(`__get__`) transforma funções em bound methods no acesso via instância.
+O shebang (`#!/usr/bin/env python3`) instrui o kernel a usar o interpretador Python
+quando o script é executado via `./script.py`.
 
-`__init__` **não é o construtor**. O construtor real é `__new__` (aloca memória). `__init__` recebe a
-instância já criada e configura atributos. Chamar `Plant("Rose", 25, 30)`:
+</details>
+
+### Classes e Objetos
+
+**TL;DR**: `class Plant:` define um tipo novo. Ela agrupa dados (atributos) e comportamentos
+(métodos). `__init__` roda quando você cria uma instância: `p = Plant("Rose", 25, 30)`.
+Dentro dos métodos, `self` é a própria instância.
+
+<details>
+<summary><strong>🔍 Aprofundando: metaclasse type, __new__, descriptor protocol, bytecode</strong></summary>
+
+O corpo da classe é executado em namespace separado pela metaclasse `type`. O resultado
+vira `__dict__` da classe.
+
+✅ `__init__` **não é o construtor**. O construtor real é `__new__` (aloca memória).
+`__init__` recebe a instância já criada e configura atributos. Chamar `Plant("Rose", 25, 30)`:
 1. `type.__call__(Plant, "Rose", 25, 30)`
 2. `Plant.__new__(Plant, ...)` aloca a instância
 3. `Plant.__init__(self, "Rose", 25, 30)` inicializa
 
-**Bytecode real de `Plant.__init__()` (ex01)**:
+✅ Bytecode real de `Plant.__init__()` (ex01) — `STORE_ATTR` com nome não mangleado
+(o name mangling já foi resolvido na compilação):
 
 ```
   4           RESUME                   0
@@ -48,20 +67,27 @@ instância já criada e configura atributos. Chamar `Plant("Rose", 25, 30)`:
               RETURN_CONST             0 (None)
 ```
 
-- `STORE_ATTR` com nome literal (não mangleado) — name mangling acontece na compilação e já aparece
-  com o nome transformado no bytecode
-- `RETURN_CONST 0 (None)` — `__init__` não tem `return` explícito, retorna `None`
+- `STORE_ATTR` com nome literal — name mangling já transformado na compilação
+- `RETURN_CONST 0 (None)` — `__init__` não tem `return` explícito
 
-**Fontes**: https://docs.python.org/3/reference/datamodel.html#object.__init__
+📚 https://docs.python.org/3/reference/datamodel.html#object.__init__
+
+</details>
 
 ### Atributos e Métodos
 
-Atributos de instância são armazenados no `__dict__` da instância. Acesso a `self.height`:
+**TL;DR**: `self.nome = valor` guarda um dado no objeto. `def metodo(self):` define uma
+função que opera na instância. Chamar `objeto.metodo()` automaticamente passa `self`.
+
+<details>
+<summary><strong>🔍 Aprofundando: descriptor protocol, MRO lookup, bytecode LOAD_ATTR</strong></summary>
+
+Acesso a `self.height`:
 1. Busca em `instance.__dict__` — se achar, retorna
 2. Se não, busca no `__dict__` da classe (e sobe na MRO)
 3. Se encontrado na classe com `__get__` (descriptor), chama o descriptor
 
-**Bytecode real de `Plant.show()` (ex01)**:
+Bytecode real de `Plant.show()` (ex01):
 
 ```
   8           RESUME                   0
@@ -74,14 +100,18 @@ Atributos de instância são armazenados no `__dict__` da instância. Acesso a `
               RETURN_VALUE
 ```
 
+</details>
+
 ### Encapsulamento — Protected vs Name Mangling
 
-Python não tem modificadores de acesso. As convenções:
-- `_attr` — **protected**: sinaliza "uso interno". Acessível, mas por convenção não deve ser.
-- `__attr` — **name mangling**: o compilador renomeia para `_ClassName__attr`. Existe para evitar
-  conflitos em herança múltipla, não para privacidade.
+**TL;DR**: Python não tem `private`. Use `_attr` pra dizer "isso é interno, não mexa".
+Use `__attr` só se precisar evitar conflito em herança (o Python renomeia pra
+`_Classe__attr`). O subject **exige** `_attr` (protected), não `__attr`.
 
-`dir()` em uma instância de `Plant` com `__height` mostra `_Plant__height` — confirmado empiricamente:
+<details>
+<summary><strong>🔍 Aprofundando: name mangling na compilação, empírico com dir()</strong></summary>
+
+`dir()` em instância com `__height` mostra `_Plant__height` (confirmado em REPL):
 
 ```python
 class Test:
@@ -91,15 +121,23 @@ t = Test()
 print(t._Test__secret)  # 42
 ```
 
-O subject do ex04 pede **protected convention** (`_attr`), não mangling. Razão: name mangling dificulta
-acesso em subclasses (`_Plant__height` vs `_Tree__height`). Código corrigido: todos os `__attr` nos
-ex04–ex06 foram convertidos para `_attr`.
+✅ Name mangling dificulta acesso em subclasses: `__attr` vira `_Pai__attr`, mas
+subclasse tenta `_Filho__attr`. Por isso o subject pede `_attr`.
 
-**Fontes**: https://docs.python.org/3/tutorial/classes.html#private-variables
+📚 https://docs.python.org/3/tutorial/classes.html#private-variables
+
+</details>
 
 ### Getters / Setters e `@property`
 
-O código usa getters/setters Java-style (`get_height()`, `set_height()`). O idioma Python é `@property`:
+**TL;DR**: O código usa getters `get_height()` e setters `set_height()` estilo Java.
+Em Python idiomático, usa-se `@property` pra mesma coisa com sintaxe mais limpa.
+
+<details>
+<summary><strong>🔍 Aprofundando: descriptor protocol de property, implementação C</strong></summary>
+
+`@property` é um descriptor: `property.__get__()` chama o getter,
+`property.__set__()` chama o setter.
 
 ```python
 @property
@@ -113,19 +151,25 @@ def height(self, value: float) -> None:
     self._height = value
 ```
 
-O subject introduz getters/setters primeiro para ensinar encapsulamento antes da syntactic sugar.
+O subject introduz getters/setters primeiro para ensinar encapsulamento antes da
+syntactic sugar. 📚 https://docs.python.org/3/library/functions.html#property
 
-**Fontes**: https://docs.python.org/3/library/functions.html#property
+</details>
 
-### Herança e MRO (C3 Linearization)
+### Herança e MRO
 
-Python usa **C3 linearization** para MRO. Para herança simples: `Flower → Plant → object`.
-`super()` delega ao próximo na MRO. Em herança múltipla (diamante), `super()` garante que cada
-classe seja chamada exatamente uma vez.
+**TL;DR**: `class Flower(Plant):` faz `Flower` herdar tudo de `Plant`. `super()` chama
+o método da classe pai. Se você não chamar `super().__init__()`, os atributos do pai
+nunca são criados.
 
-`super().__init__()` deve ser chamado para reusar a lógica do pai.
+<details>
+<summary><strong>🔍 Aprofundando: C3 linearization, LOAD_SUPER_ATTR bytecode</strong></summary>
 
-**Bytecode real de `Flower.__init__()` (ex05)**:
+Python usa **C3 linearization** para MRO. Herança simples: `Flower → Plant → object`.
+`super()` delega ao próximo na MRO.
+
+✅ Bytecode real de `Flower.__init__()` (ex05) — `LOAD_SUPER_ATTR` (3.12+) é o opcode
+dedicado para `super()`:
 
 ```
  96           RESUME                   0
@@ -140,37 +184,36 @@ classe seja chamada exatamente uma vez.
 105           LOAD_CONST               1 ('')
               LOAD_FAST                0 (self)
               STORE_ATTR               2 (_color)
- ...
 ```
 
 - `LOAD_SUPER_ATTR` (3.12+) — opcode dedicado para `super()`
 - A sequência `super()` + `__init__` compila para `LOAD_GLOBAL(super)` + `LOAD_DEREF(__class__)` +
   `LOAD_SUPER_ATTR` + argumentos + `CALL`
-- `STORE_ATTR` usa o nome já mangleado (aqui `_color`, não `__color`)
 
-### `super()` e Herança em Cadeia
+`super()` sem argumentos equivale a `super(__class__, self)`. A variável `__class__`
+é inserida pelo compilador em métodos.
 
-`super()` sem argumentos equivale a `super(__class__, self)`. A variável `__class__` é inserida
-pelo compilador em métodos. O objeto `super` resultante busca na MRO a partir da classe seguinte.
-
-No código existente, `Flower.show()` (ex05) **não chama** `super().show()` — constrói a string do zero,
-duplicando a formatação. Um design melhor seria:
+⚠️ No código existente, `Flower.show()` (ex05) **não chama** `super().show()` — constrói a
+string do zero, duplicando lógica. Design alternativo:
 
 ```python
 def show(self) -> str:
     return f"{super().show()}\nColor: {self._color}"
 ```
 
-### `@staticmethod` vs `@classmethod` vs Método de Instância
+</details>
 
-| Decorator | Primeiro parâmetro | Acesso | Uso |
-|-----------|-------------------|--------|-----|
-| (nenhum) | `self` | instância | opera no estado |
-| `@classmethod` | `cls` | classe | factory methods |
-| `@staticmethod` | nenhum | nada | utilitária no namespace da classe |
+### `@staticmethod` vs `@classmethod`
 
-**Bytecode real de `Plant.is_older_than_year()` (staticmethod, ex06)**:
+**TL;DR**:
+- Método normal recebe `self` (instância)
+- `@classmethod` recebe `cls` (classe) — útil pra factories
+- `@staticmethod` não recebe nem `self` nem `cls` — é uma função normal dentro da classe
 
+<details>
+<summary><strong>🔍 Aprofundando: bytecode real de ambos, bound vs unbound</strong></summary>
+
+Bytecode de `Plant.is_older_than_year()` (staticmethod, ex06):
 ```
  33           RESUME                   0
  34           LOAD_FAST                0 (days)
@@ -178,11 +221,9 @@ def show(self) -> str:
               COMPARE_OP             148 (bool(>))
               RETURN_VALUE
 ```
+— não recebe `self` ou `cls`, apenas argumentos explícitos.
 
-— não recebe `self` ou `cls`, apenas os argumentos explícitos.
-
-**Bytecode real de `Plant.create_anonymous()` (classmethod, ex06)**:
-
+Bytecode de `Plant.create_anonymous()` (classmethod, ex06):
 ```
  37           RESUME                   0
  39           LOAD_FAST                0 (cls)
@@ -195,91 +236,95 @@ def show(self) -> str:
               CALL                     5
               RETURN_VALUE
 ```
+— se chamado em `Flower.create_anonymous()`, `cls` = `Flower`.
 
-— `cls` é passado como primeiro argumento. Se chamado em `Flower.create_anonymous()`, `cls` = `Flower`,
-e a instância criada será do tipo `Flower`.
+📚 https://docs.python.org/3/library/functions.html#classmethod
+
+</details>
 
 ### Nested Classes
 
-```python
-class Plant:
-    class _Stats:
-        def __init__(self):
-            self.grow_count = 0
-```
+**TL;DR**: Uma classe dentro de outra. Em Python, **não** são inner classes como em Java —
+não têm acesso automático à instância externa.
 
-Classes aninhadas em Python **não** são inner classes (estilo Java). `_Stats` é apenas um atributo
-de `Plant` — não tem acesso automático à instância externa.
+<details>
+<summary><strong>🔍 Aprofundando: nested class é atributo estático, herança de nested</strong></summary>
 
-`Tree._TreeStats(Plant._Stats)` estende a nested class adicionando `shade_count`. O `super()` dentro
-de `_TreeStats.display()` chama `Plant._Stats.display()`.
+`_Stats` dentro de `Plant` é apenas um atributo de classe — não recebe `self` da externa.
+`Tree._TreeStats(Plant._Stats)` estende a nested class.
+`_TreeStats.display()` pode chamar `super().display()` normalmente.
 
-### `match` / `case` (Structural Pattern Matching, PEP 634–636)
+</details>
 
-```python
-match plant:
-    case Tree():
-        plant.produce_shade()
-    case Flower():
-        plant.bloom()
-    case _:
-        pass
-```
+### `match` / `case`
 
-`match` usa `isinstance()` internamente. `case Tree():` verifica a classe do sujeito. Ordem importa:
-primeiro match ganha. A performance é similar a uma cadeia de `isinstance()` checks.
+**TL;DR**: `match valor:` testa o valor contra vários padrões. `case Tree():` verifica
+se é instância de `Tree`. Útil pra polimorfismo sem precisar de métodos virtuais.
 
-**Fontes**: https://peps.python.org/pep-0634/
+<details>
+<summary><strong>🔍 Aprofundando: isinstance internamente, PEP 634, performance</strong></summary>
+
+`match` usa `isinstance()` internamente. `case Tree():` verifica a classe do sujeito.
+Ordem importa: primeiro match ganha. Performance similar a cadeia de `isinstance()`.
+
+📚 https://peps.python.org/pep-0634/
+
+</details>
+
+---
 
 ## Regras e Restrições do Subject
 
-| Regra | Motivo |
-|-------|--------|
-| Python 3.10+ | match/case (PEP 634), type union |
+| Regra | Por quê? |
+|-------|----------|
+| Python 3.10+ | match/case (PEP 634) |
 | PascalCase classes / snake_case vars | PEP 8 |
-| flake8 + mypy obrigatórios | Type hints verificados |
 | `super()` autorizado | Herança |
-| `@staticmethod`, `@classmethod` autorizados (ex06) | Decorator syntax |
+| `@staticmethod`, `@classmethod` autorizados | Decorator syntax |
 | Protected convention (`_attr`) | Mangling prejudica herança |
 | `if __name__` permitido | Diferença de module_00 |
 
-## Correlação com Exercícios Existentes
+---
+
+## Correlação com Exercícios
 
 ### ex00 — ft_garden_intro.py
-Único exercício do repositório **sem função** — script puro com `if __name__`. Quebra o padrão.
-Valores hardcoded (Rose, 25cm, 30 days). Subject menciona "variáveis simples".
+Único exercício do repositório **sem função** — script puro com `if __name__`.
+Valores hardcoded (Rose, 25cm, 30 days).
 
 ### ex01 — ft_garden_data.py
-`class Plant` com `__init__` + `show()`. Tem `try/except ValueError` (antecipando module_02).
-Lógica interativa (`exit/add`) vai além do subject.
+`class Plant` com `__init__` + `show()`. Tem `try/except ValueError`.
 
 ### ex02 — ft_plant_growth.py
-Adiciona `grow()` e `age()`. Simula 7 dias com `range(7)`. Growth rate configurável.
+Adiciona `grow()` e `age()`. Simula 7 dias com `range(7)`.
 
 ### ex03 — ft_plant_factory.py
-Construtor com parâmetros. Cria 5 plantas pré-definidas. Adiciona `total_plants` counter extra.
+Construtor com parâmetros. Cria 5 plantas. Adiciona `total_plants` counter extra.
 
 ### ex04 — ft_garden_security.py
-**Corrigido**: `__` → `_`. Getters/setters com validação de negativos via `print()` (não `raise`).
+Getters/setters com validação de negativos via `print()` (não `raise`).
 
 ### ex05 — ft_plant_types.py
-**Corrigido**: `__` → `_` na base e subclasses. `Flower.show()` **não chama** `super().show()` —
-duplica lógica de formatação. `Tree.__init__` reatribui `self._stats` — sobrescreve `_Stats` com
-`_TreeStats`.
+`Flower.show()` **não** chama `super().show()` — não usa herança para estender
+a formatação. `Tree.__init__` reatribui `self._stats`, sobrescrevendo `_Stats`
+com `_TreeStats`.
 
 ### ex06 — ft_garden_analytics.py
-**Corrigido**: `__` → `_` e `set_ages(64)` → `for _ in range(20)`. Implementa `Seed(Flower)`,
-`_TreeStats(Plant._Stats)`, `@staticmethod`, `@classmethod`. A função `display_plant_stats` é
-definida fora de classe — pattern funcional.
+`Seed(Flower)`, `_TreeStats(Plant._Stats)`, `@staticmethod`, `@classmethod`.
+Função `display_plant_stats` definida fora de classe — pattern funcional.
+
+---
 
 ## Erros Comuns
 
 1. Name mangling em subclasse: `__attr` vira `_Pai__attr`, subclasse acessa `_Filho__attr`
 2. Esquecer `super().__init__()` — atributos do pai nunca criados
-3. `@staticmethod` não recebe `self` nem `cls` — erro comum de assinatura
+3. `@staticmethod` não recebe `self` nem `cls`
 4. Nested class não tem relação com instância externa
 5. `match/case` com `case _:` antes dos específicos — sempre match
 6. Getters/setters sem validação — subject testa negativos
+
+---
 
 ## Perguntas de Autoavaliação
 
@@ -288,7 +333,9 @@ definida fora de classe — pattern funcional.
 - O que é o descriptor protocol? Como transforma funções em bound methods?
 - `@classmethod` recebe `cls`. Como a herança afeta o valor de `cls`?
 - Por que o subject pede `_attr` em vez de `__attr`?
-- `_Stats` dentro de `Plant` — é possível instanciá-la de fora? A protegida?
+- `_Stats` dentro de `Plant` — é possível instanciá-la de fora?
+
+---
 
 ## Fontes Consultadas
 

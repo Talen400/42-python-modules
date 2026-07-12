@@ -1,34 +1,74 @@
-# 42 - Python Modules 🐍
+# 42 — Python Modules
 
-A deep dive into the Python ecosystem, focusing on software engineering best practices, rigorous static typing, and code quality under the **42 Network** curriculum framework.
+Este repositório contém os exercícios dos **Python Modules** da [42](https://42.fr/), um
+currículo imersivo de engenharia de software. Cada module foca um tema de Python — de
+sintaxe básica a tópicos avançados — com exercícios corrigidos por uma moulinette
+automatizada e por peers.
 
----
+## O que é a "Piscine" de Python?
 
-## 🛠️ Quality Assurance & Tools
+Na 42, os módulos de Python são uma trilha de aprendizado progressivo. Você recebe um
+**subject** (`en.subject.pdf`) descrevendo os exercícios e deve implementar soluções que
+passem pela moulinette (testes automatizados) e pela defesa com outro aluno.
 
-To match the strict evaluation standards of 42, this repository leverages an isolated virtual environment (`.venv`) utilizing static analysis tools to enforce code quality before any commit:
+## O que são os `concept.md`?
 
-* **Flake8:** Enforces style guide consistency in compliance with **PEP 8**.
-* **Mypy:** Enforces strict static typing (`--strict` mode), bringing the type-safety assurance of the C world into Python's dynamic nature.
+Cada module_XX contém um `concept.md` — material de estudo complementar que **não substitui**
+fazer os exercícios. Eles existem para:
 
----
+- Explicar os conceitos por trás de cada exercício
+- Mostrar bytecode real (`dis.dis()`) e comportamento interno do CPython
+- Correlacionar teoria com o código já implementado (bugs, decisões de design)
+- Apontar erros comuns que a moulinette pega
 
-## 📂 Repository Structure
+### Como usar
 
-The project is structured into progressive modules. The current roadmap and progress are detailed below:
+1. Leia o `en.subject.pdf` do módulo (entenda o que é pedido)
+2. Tente fazer os exercícios
+3. Consulte o `concept.md` para aprofundar conceitos ou entender por que algo não funciona
+4. Use as perguntas de autoavaliação para testar seu entendimento
 
-| Module | Focus / Topics | Status |
-| :--- | :--- | :---: |
-| `module_00` | Starting, basic syntax, data structures, and recursion | ⏳ In Progress |
-| `module_01` to `module_09` | OOP, advanced data manipulation, data science basics, and vectorization | 🔒 Locked |
+> ⚠️ Os `concept.md` **não contêm soluções completas**. Eles explicam conceitos e
+> analisam código existente, mas não fornecem código pronto para copiar. O objetivo
+> é que você entenda o suficiente para escrever suas próprias soluções.
 
----
+## Estrutura
 
-## 🚀 Getting Started & Automation
+```
+module_00/          # Python Fundamentals
+  en.subject.pdf    # Enunciado oficial
+  ex00/             # Exercícios
+  ex01/
+  ...
+  concept.md        # Material de estudo
+module_01/          # Object-Oriented Programming
+  ...
+module_02/          # Error Handling
+module_03/          # Collections
+module_04/          # File I/O
+```
 
-All environment provisioning and testing pipelines are fully automated via the `Makefile`. No manual local Python configuration is required.
+## Convenções dos `concept.md`
 
-### 1. Clone the repository
+Cada conceito é apresentado em **duas camadas**:
+
+1. **TL;DR** — explicação direta sem jargão, para leitura rápida
+2. **🔬 Aprofundamento** (dentro de `<details>`) — bytecode real, internals, edge cases
+
+Toda afirmação técnica carrega um badge de confiança:
+
+- ✅ confirmado por execução real (`dis.dis()`, REPL)
+- 📚 confirmado pela documentação oficial
+- ⚠️ não verificado
+
+## Ferramentas
+
 ```bash
-git clone [https://github.com/your-username/42-python-modules.git](https://github.com/your-username/42-python-modules.git)
-cd 42-python-modules
+# Instalar dependências
+make install
+
+# Verificar código com flake8 + mypy
+make lint
+```
+
+Consulte o [Makefile](Makefile) para detalhes.
