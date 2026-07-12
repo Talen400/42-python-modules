@@ -134,7 +134,7 @@ de chaves: `f"Olá, {nome}"`. O Python avalia a expressão e formata o resultado
 > ```
 >
 > O `BUILD_STRING` concatena as partes. `FORMAT_SIMPLE` chama `__format__` na expressão.
-> ⚠️ Atenção: a indentação do bloco `"""` (espaços e `\n`) é **literal** na string final.
+> **Atenção**: a indentação do bloco `"""` (espaços e `\n`) é **literal** na string final.
 
 </details>
 
@@ -183,7 +183,7 @@ algum momento).
 <details>
 <summary><strong>🔍 Aprofundando: bytecode sem SETUP_LOOP, JUMP_BACKWARD</strong></summary>
 
-> ⚠️ O `while` em Python 3.13 compila **sem** `SETUP_LOOP` — opcode removido no Python 3.8.
+> O `while` em Python 3.13 compila **sem** `SETUP_LOOP` — opcode removido no Python 3.8.
 > Usa `POP_JUMP_IF_FALSE` + `JUMP_BACKWARD`.
 >
 > Exemplo genérico:

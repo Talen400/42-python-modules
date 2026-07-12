@@ -193,7 +193,7 @@ nunca são criados.
 > `super()` sem argumentos equivale a `super(__class__, self)`. A variável `__class__`
 > é inserida pelo compilador em métodos.
 >
-> ⚠️ No código existente, `Flower.show()` (ex05) **não chama** `super().show()` — constrói a
+> No código existente, `Flower.show()` (ex05) **não chama** `super().show()` — constrói a
 > string do zero, duplicando lógica. Design alternativo:
 >
 > ```python

@@ -175,7 +175,7 @@ match ganha. `except Exception:` captura erros comuns. `except:` captura tudo (m
 > O código do `finally` aparece **duplicado** no bytecode: uma cópia pro caminho sem exceção
 > (após `L2`) e outra pro caminho com exceção (`L8`). Isso garante que sempre execute.
 >
-> ⚠️ Caso extremo: se `finally` contém `return`, ele sobrepõe a exceção pendente — exceção
+> **Caso extremo**: se `finally` contém `return`, ele sobrepõe a exceção pendente — exceção
 > **engolida**.
 >
 > https://docs.python.org/3/reference/compound_stmts.html#the-try-statement
