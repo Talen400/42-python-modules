@@ -50,7 +50,7 @@ Dentro dos métodos, `self` é a própria instância.
 > 2. `Plant.__new__(Plant, ...)` aloca a instância
 > 3. `Plant.__init__(self, "Rose", 25, 30)` inicializa
 >
-> ✅ [Bytecode](../GLOSSARY.md#bytecode) real de `Plant.__init__()` (ex01) — `STORE_ATTR` com nome não mangleado
+> ✅ Bytecode real de `Plant.__init__()` (ex01) — `STORE_ATTR` com nome não mangleado
 > (o name mangling já foi resolvido na compilação):
 >
 > ```
@@ -84,8 +84,8 @@ função que opera na instância. Chamar `objeto.metodo()` automaticamente passa
 
 > Acesso a `self.height`:
 > 1. Busca em `instance.__dict__` — se achar, retorna
-> 2. Se não, busca no `__dict__` da classe (e sobe na [MRO](../GLOSSARY.md#mro))
-> 3. Se encontrado na classe com `__get__` ([descriptor](../GLOSSARY.md#descriptor-protocol)), chama o descriptor
+> 2. Se não, busca no `__dict__` da classe (e sobe na MRO)
+> 3. Se encontrado na classe com `__get__` (descriptor), chama o descriptor
 >
 > Bytecode real de `Plant.show()` (ex01):
 >
@@ -106,7 +106,7 @@ função que opera na instância. Chamar `objeto.metodo()` automaticamente passa
 
 **TL;DR**: Python não tem `private`. Use `_attr` pra dizer "isso é interno, não mexa".
 Use `__attr` só se precisar evitar conflito em herança (o Python renomeia pra
-`_Classe__attr` via [name mangling](../GLOSSARY.md#name-mangling)). O subject **exige** `_attr` ([protected convention](../GLOSSARY.md#protected-convention)), não `__attr`.
+`_Classe__attr` via name mangling). O subject **exige** `_attr` (protected convention), não `__attr`.
 
 <details>
 <summary><strong>🔍 Aprofundando: name mangling na compilação, empírico com dir()</strong></summary>
@@ -168,7 +168,7 @@ nunca são criados.
 > Python usa **C3 linearization** para MRO. Herança simples: `Flower → Plant → object`.
 > `super()` delega ao próximo na MRO.
 >
-> ✅ Bytecode real de `Flower.__init__()` (ex05) — `LOAD_SUPER_ATTR` (3.12+) é o [opcode](../GLOSSARY.md#opcode)
+> ✅ Bytecode real de `Flower.__init__()` (ex05) — `LOAD_SUPER_ATTR` (3.12+) é o opcode
 > dedicado para `super()`:
 >
 > ```
@@ -266,7 +266,7 @@ não têm acesso automático à instância externa.
 se é instância de `Tree`. Útil pra polimorfismo sem precisar de métodos virtuais.
 
 <details>
-<summary><strong>🔍 Aprofundando: isinstance internamente, [PEP 634](../GLOSSARY.md#pep), performance</strong></summary>
+<summary><strong>🔍 Aprofundando: isinstance internamente, PEP 634, performance</strong></summary>
 
 > `match` usa `isinstance()` internamente. `case Tree():` verifica a classe do sujeito.
 > Ordem importa: primeiro match ganha. Performance similar a cadeia de `isinstance()`.
@@ -281,7 +281,7 @@ se é instância de `Tree`. Útil pra polimorfismo sem precisar de métodos virt
 
 | Regra | Por quê? |
 |-------|----------|
-| Python 3.10+ | match/case ([PEP 634](../GLOSSARY.md#pep)) |
+| Python 3.10+ | match/case (PEP 634) |
 | PascalCase classes / snake_case vars | PEP 8 |
 | `super()` autorizado | Herança |
 | `@staticmethod`, `@classmethod` autorizados | Decorator syntax |
