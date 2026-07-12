@@ -8,7 +8,7 @@ automatizada e por peers.
 ## O que é a "Piscine" de Python?
 
 Na 42, os módulos de Python são uma trilha de aprendizado progressivo. Você recebe um
-**subject** (`en.subject.pdf`) descrevendo os exercícios e deve implementar soluções que
+**subject** descrevendo os exercícios e deve implementar soluções que
 passem pela moulinette (testes automatizados) e pela defesa com outro aluno.
 
 ## O que são os `concept.md`?
@@ -23,7 +23,7 @@ fazer os exercícios. Eles existem para:
 
 ### Como usar
 
-1. Leia o `en.subject.pdf` do módulo (entenda o que é pedido)
+1. Leia o subject do módulo (entenda o que é pedido)
 2. Tente fazer os exercícios
 3. Consulte o `concept.md` para aprofundar conceitos ou entender por que algo não funciona
 4. Use as perguntas de autoavaliação para testar seu entendimento
@@ -36,7 +36,6 @@ fazer os exercícios. Eles existem para:
 
 ```
 module_00/          # Python Fundamentals
-  en.subject.pdf    # Enunciado oficial
   ex00/             # Exercícios
   ex01/
   ...

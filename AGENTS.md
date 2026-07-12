@@ -5,7 +5,7 @@ Instruções para o agente trabalhar neste repositório (Python Modules — 42).
 ## Contexto do Projeto
 
 Este repositório contém os exercícios dos Python Modules da 42 (module_00 a module_10).
-Cada module possui um `en.subject.pdf` com o enunciado oficial e pastas `exXX/` com o
+Cada module possui um subject com o enunciado oficial e pastas `exXX/` com o
 código já implementado (quando existente).
 
 O objetivo do usuário é **estudar e revisar conceitos**, não gerar cola. O usuário já é
@@ -143,7 +143,7 @@ Como o repositório é público, mantenha também:
 
 - **`README.md`** na raiz explicando: o que é a 42 e a piscine de Python (breve),
   o que são os `concept.md` (material de estudo complementar, não solução), como
-  navegar (ler o `en.subject.pdf` do módulo primeiro, depois o `concept.md`), e um
+  navegar (ler o subject do módulo primeiro, depois o `concept.md`), e um
   aviso claro de que o conteúdo não substitui fazer os exercícios sozinho.
 - **`GLOSSARY.md`** na raiz com termos que se repetem entre módulos (ex: bytecode,
   frame, moulinette, norma, type hint, PEP). Isso evita reexplicar o básico em todo
